@@ -1,0 +1,73 @@
+body{
+    background-color: #f4f4f4 !important;
+}
+.container{
+    min-width: 98%;
+}
+.menuBox{
+    /* border: 1px solid lightslategray; */
+    /*position: absolute;*/
+   /* width: 125px;
+    height: 90px;
+    left: 139px;
+    top: 6px;*/
+    background: #FFFFFF;
+    box-shadow: -2px 1px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 2%;
+/*    margin-left: 3px;
+    margin-right: 3px;*/
+}
+
+.menuBox p{
+  display: block;
+    margin-block-start: 1em !important;
+}
+
+.row mb-4{
+    min-height: 120px;
+}
+#line1, #line2{
+    height: 50%;
+}#line1{
+    border-bottom:1px solid rgba(0, 0, 0, 0.12);
+ }
+
+ .datasetOptions{
+    background: #FFFFFF;
+    border: 0.5px solid #e2e2e2;
+    border-radius: 2px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    padding: 7px;
+    line-height: 9PX;
+    letter-spacing: 0.0357143em;
+ }
+.datasetOptions .option{
+    background: #FFFFFF;
+    border: 0.5px solid #e2e2e2;
+    border-radius: 2px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+ }
+
+.bootstrap-select .btn:focus{outline:none!important;}
+/*
+.container{
+    position: relative;
+    margin: 3.8% 0 0 0 !important;
+}
+.row {
+    float: none;
+    position: absolute;
+    position: inherit;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+*/
+.row {
+    min-height: 120px;
+}

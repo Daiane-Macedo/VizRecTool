@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load django_altair %}
+
+{% load static %}
+{% block script %}
+
+<script src="{% static 'js/vega@3.2.js' %}"></script>
+<script src="{% static 'js/vega-lite@2.4.1.js' %}"></script>
+<script src="{% static 'js/vega-embed@3.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm//vega@3.2"></script>
+<script src="https://cdn.jsdelivr.net/npm//vega-lite@2.4.1"></script>
+<script src="https://cdn.jsdelivr.net/npm//vega-embed@3.0"></script>
+
+{% endblock %}
+
+{% block content %}
+<div id="page-wrapper">
+    <div class="container">
+         <div class="row mb-4 ">
+            <div class="col-2 menuBox" id ="1" >
+                <p>Nome da <br> Ferramenta</p>
+            </div>
+         <div class="col-3 menuBox">
+            <select name="datasetOptions" class = "datasetOptions">
+                <option value="ex" selected>Dataset Exemplo</option>
+              </select>
+         </div>
+         <div class="col-5 menuBox">
+             <div id = "line1">
+               Coluna:
+             </div>
+
+            <div id = "line2">
+               Linha:
+            </div>
+
+         </div>
+         <div class="col-2 menuBox">
+            Exportar
+         </div>
+    </div>
+</div>
+
+<div class="container2">
+    <div>
+        <p>This is a chart</p>
+        {% render_chart chart %}
+    </div>
+
+    <div>
+        <p>This is a chart</p>
+        {% render_chart chart2 %}
+    </div>
+</div>
+{% endblock %}
