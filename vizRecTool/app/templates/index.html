@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm//vega@3.2"></script>
 <script src="https://cdn.jsdelivr.net/npm//vega-lite@2.4.1"></script>
 <script src="https://cdn.jsdelivr.net/npm//vega-embed@3.0"></script>
+<script src="{% static "js/index.js" %}"></script>
 
 {% endblock %}
 
@@ -21,33 +22,42 @@
                 <p>Nome da <br> Ferramenta</p>
             </div>
          <div class="col-3 menuBox">
-            <select name="datasetOptions" class = "datasetOptions">
-                <option value="ex" selected>Dataset Exemplo</option>
-              </select>
+             <div class = 'block'>Dataset:</div>
+             <input type="file" name="file" id="file" class="inputfile" />
+            <label for="file">Escolher</label>
          </div>
          <div class="col-5 menuBox">
-             <div id = "line1">
-               Coluna:
-             </div>
+            <div class = 'block'>
+                 <div id = "line1">Coluna:
+                     <select class="selectColumn">
+                        <option>Teste1</option>
+                        <option>Teste2</option>
+                    </select>
+                 </div>
 
-            <div id = "line2">
-               Linha:
+                <div id = "line2">Linha:
+                    <select class="selectColumn">
+                        <option>Linha teste1</option>
+                        <option>Linha teste2</option>
+                    </select>
+                </div>
             </div>
-
          </div>
          <div class="col-2 menuBox">
-            Exportar
+            <div class = 'block export'>Exportar:
+                <div class="downloadButton"> <button><img src="{% static '/css/arrow.png' %}"></button></div>
+            </div>
          </div>
     </div>
 </div>
 
 <div class="container2">
-    <div>
+    {% comment %}<div>
         <p>This is a chart</p>
         {% render_chart chart %}
-    </div>
+    </div>{% endcomment %}
 
-    <div>
+    <div class="chart">
         <p>This is a chart</p>
         {% render_chart chart2 %}
     </div>

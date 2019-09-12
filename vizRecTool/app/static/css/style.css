@@ -1,21 +1,53 @@
 body{
     background-color: #f4f4f4 !important;
+    color: #6b6b6b !important;
 }
 .container{
-    min-width: 98%;
+    min-width: 94%;
 }
+.container2{
+    text-align: center;
+    width: 96%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin: 0 auto;
+}
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputfile + label {
+    transition: box-shadow .3s;
+    font-size: 1em;
+    font-weight: 200;
+    position: relative;
+    padding: 4px 8px 4px 8px !important;
+    /*padding: 4px;*/
+    overflow: hidden;
+    border-width: 0;
+    outline: none;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+    background-color: #3c47cc;
+    color: #FFFFFF;
+  /*  transition: background-color .3s;*/
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
 .menuBox{
-    /* border: 1px solid lightslategray; */
-    /*position: absolute;*/
-   /* width: 125px;
-    height: 90px;
-    left: 139px;
-    top: 6px;*/
+   /* border: 1px solid lightslategray;*/
     background: #FFFFFF;
     box-shadow: -2px 1px 5px rgba(0, 0, 0, 0.1);
     margin-top: 2%;
-/*    margin-left: 3px;
-    margin-right: 3px;*/
 }
 
 .menuBox p{
@@ -29,9 +61,16 @@ body{
 #line1, #line2{
     height: 50%;
 }#line1{
+    padding-bottom: 5px;
     border-bottom:1px solid rgba(0, 0, 0, 0.12);
  }
-
+#line2{
+    padding-top: 5px;
+    padding-left: 0.75em;
+}
+#line2 select{
+    width: 45.8%;
+}
  .datasetOptions{
     background: #FFFFFF;
     border: 0.5px solid #e2e2e2;
@@ -53,21 +92,39 @@ body{
  }
 
 .bootstrap-select .btn:focus{outline:none!important;}
-/*
-.container{
-    position: relative;
-    margin: 3.8% 0 0 0 !important;
-}
-.row {
-    float: none;
-    position: absolute;
-    position: inherit;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-}
-*/
+
 .row {
     min-height: 120px;
 }
+.block{
+    display: block;
+    margin-block-start: 1em !important;
+}
+.selectColumn{
+    width: 45%;
+    transition: box-shadow .3s;
+    font-size: 1em;
+    font-weight: 200;
+    position: relative;
+    padding: 4px 8px 4px 8px !important;
+    overflow: hidden;
+    outline: none;
+    border-radius: 2px;
+    background-color: #ffff;
+    color: #6b6b6b;
+    border: 1px solid #bdbaba;
+}
+.selectColumn:hover{
+     box-shadow: 0 0 5px rgba(33,33,33,.2);
+}
+.chart{
+    background: #FFFFFF;
+    min-width: 94%;
+}
+.downloadButton button img{
+    width: 2em;
+}
+.export{
+    text-align: center;
+}
+input, button, submit { border:none; background: none   ; }
