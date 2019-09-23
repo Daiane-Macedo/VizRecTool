@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render
 import altair as alt
@@ -10,9 +10,23 @@ from vega_datasets import data
 class IndexView(TemplateView):
     template_name = 'index.html'
 
+    def chart(request):
+        if request.method == 'POST':
+            print("BUILDING CHART...");
+
+            csvFile = request.FILES['csvfile']
+            fileName = csvFile.name
+
+            if fileName.lower().endswith('.csv'):
+                fileName = fileName[:-4]
+
+            dataFrame = pd.read_csv(csvFile)
+
+        request.d = {}
+        return render(request, 'index.html', request)
+
     def get(self, request, *args, **kwargs):
         context = locals()
-
         data3 = pd.DataFrame({
             'Eixo x': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
             'Eixo y': [28, 55, 43, 91, 81, 53, 19, 87, 52]

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load django_altair %}
+{% comment %}{% load django_altair %}{% endcomment %}
 
 {% load static %}
 {% block script %}
@@ -23,8 +23,10 @@
             </div>
          <div class="col-3 menuBox">
              <div class = 'block'>Dataset:</div>
-             <input type="file" name="file" id="file" class="inputfile" />
-            <label for="file">Escolher</label>
+             <form action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                <input type="file" name="csvfile" id="file" accept="text/csv" class="inputfile" onchange="this.form.submit()"/>
+                <label for="file">Escolher</label>
+             </form>
          </div>
          <div class="col-5 menuBox">
             <div class = 'block'>
@@ -45,7 +47,7 @@
          </div>
          <div class="col-2 menuBox">
             <div class = 'block export'>Exportar:
-                <div class="downloadButton"> <button><img src="{% static '/css/arrow.png' %}"></button></div>
+                <div class="downloadButton"> <button><img src="{% static '/img/arrow.png' %}"></button></div>
             </div>
          </div>
     </div>
@@ -57,9 +59,9 @@
         {% render_chart chart %}
     </div>{% endcomment %}
 
-    <div class="chart">
-        <p>This is a chart</p>
+  {% comment %}  <div class="chart">
+        <p>Gráfico de Dispersão</p>
         {% render_chart chart2 %}
-    </div>
+    </div>{% endcomment %}
 </div>
 {% endblock %}
