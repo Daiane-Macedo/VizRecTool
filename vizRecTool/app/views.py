@@ -2,9 +2,10 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render
+from services.services import GraphService
+from vega_datasets import data
 import altair as alt
 import pandas as pd
-from vega_datasets import data
 
 
 class IndexView(TemplateView):
@@ -12,18 +13,10 @@ class IndexView(TemplateView):
 
     def chart(request):
         if request.method == 'POST':
-            print("BUILDING CHART...");
-
             csvFile = request.FILES['csvfile']
-            fileName = csvFile.name
+            data = GraphService.buildGraph(csvFile)
 
-            if fileName.lower().endswith('.csv'):
-                fileName = fileName[:-4]
-
-            dataFrame = pd.read_csv(csvFile)
-
-        request.d = {}
-        return render(request, 'index.html', request)
+        return render(request, 'index.html')
 
     def get(self, request, *args, **kwargs):
         context = locals()
@@ -46,3 +39,10 @@ class IndexView(TemplateView):
         ).interactive()
 
         return render(request, self.template_name, context)
+
+
+class Chart(object):
+    bar = 0
+    line = 1
+    scatter = 2
+    pie = 3
