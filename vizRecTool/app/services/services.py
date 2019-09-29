@@ -17,21 +17,22 @@ class FileDataService:
 
         fileName = csvFile.name
         if not (fileName.lower().endswith('.csv')):
-            return True
-
+            return False
         fileName = fileName[:-4]
 
-        df = pd.read_csv(csvFile, nrows=25, encoding="ISO-8859-1")
-        df = df.reset_index()
+        df = pd.read_csv(csvFile, nrows=25, index_col=False, encoding="ISO-8859-1")
+        df.reset_index(drop=True, inplace=True)
         df = df.applymap(str)
-        print(df)
-        columns = formatLine(df.columns[1:].values)
+        header = formatLine(df.columns[0:].values)
+        print(header)
         line = formatLine(df.loc[0, :].values)
-        # row = df.loc[0, :].values
+        categoricalColumns = []
 
-        for x in line:
-            print(x)
-            print(utils.columnType(x))
+        for i in range(len(line)):
+            if (utils.columnType(line[i]) == utils.Type.categorical) or (utils.columnType(line[i]) == utils.Type.cDate):
+                print(line[i], " == ", utils.columnType(line[i]))
+                categoricalColumns.append(header[i])
+        print(categoricalColumns)
 
         return None
 

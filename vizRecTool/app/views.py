@@ -11,7 +11,6 @@ import pandas as pd
 
 class IndexView(TemplateView):
     template_name = 'index.html'
-    validFile = True
 
     def chart(request):
         context = locals()
