@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
+from django.contrib import messages
 from django.views.generic import TemplateView
-from django.shortcuts import render
-from services.services import GraphService
+from django.shortcuts import render, render_to_response
+from services.services import FileDataService
 from vega_datasets import data
 import altair as alt
 import pandas as pd
@@ -10,12 +11,17 @@ import pandas as pd
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+    validFile = True
 
     def chart(request):
+        context = locals()
         if request.method == 'POST':
             csvFile = request.FILES['csvfile']
-            data = GraphService.buildGraph(csvFile)
-
+            try:
+                data = FileDataService.loadData(csvFile)
+            except Exception as e:
+                print(e)
+                return render(request, 'index.html', messages.error(request, "Erro ao carregar arquivo"))
         return render(request, 'index.html')
 
     def get(self, request, *args, **kwargs):

@@ -1,6 +1,5 @@
 import csv
 import itertools
-import re
 import pandas as pd
 import altair as alt
 import sys
@@ -12,22 +11,30 @@ sys.path.append("..")
 import utils
 
 
-class GraphService:
+class FileDataService:
 
-    def buildGraph(csvFile):
+    def loadData(csvFile):
+
         fileName = csvFile.name
-        if fileName.lower().endswith('.csv'):
-            fileName = fileName[:-4]
+        if not (fileName.lower().endswith('.csv')):
+            return True
 
-        df = pd.read_csv(csvFile, nrows=25)
+        fileName = fileName[:-4]
+
+        df = pd.read_csv(csvFile, nrows=25, encoding="ISO-8859-1")
         df = df.reset_index()
-        columns = formatLine(df.columns[0])
-        row = df.loc[0, :].values
-        for x in row:
+        df = df.applymap(str)
+        print(df)
+        columns = formatLine(df.columns[1:].values)
+        line = formatLine(df.loc[0, :].values)
+        # row = df.loc[0, :].values
+
+        for x in line:
+            print(x)
             print(utils.columnType(x))
 
         return None
-    
+
 
 def findFileHeader(fileName):
     with open(fileName) as file:
@@ -42,8 +49,11 @@ def findFileHeader(fileName):
 
 
 def formatLine(line):
+    line = ''.join(line)
     delimiter = detectDelimiter(line)
+
     formattedLine = line.replace('"', '').replace("'", "").split(delimiter)
+    formattedLine = formattedLine[0:]
     return formattedLine
 
 

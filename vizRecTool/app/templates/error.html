@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% block script %}{% endblock %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+    <body>
+        <div id="error" >
+            {{ message }}
+        </div>
+    </body>
+</html>

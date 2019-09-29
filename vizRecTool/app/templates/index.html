@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm//vega@3.2"></script>
 <script src="https://cdn.jsdelivr.net/npm//vega-lite@2.4.1"></script>
 <script src="https://cdn.jsdelivr.net/npm//vega-embed@3.0"></script>
-<script src="{% static "js/index.js" %}"></script>
 
 {% endblock %}
 
@@ -21,47 +20,51 @@
             <div class="col-2 menuBox" id ="1" >
                 <p>Nome da <br> Ferramenta</p>
             </div>
-         <div class="col-3 menuBox">
-             <div class = 'block'>Dataset:</div>
-             <form action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                <input type="file" name="csvfile" id="file" accept="text/csv" class="inputfile" onchange="this.form.submit()"/>
-                <label for="file">Escolher</label>
-             </form>
-         </div>
-         <div class="col-5 menuBox">
-            <div class = 'block'>
-                 <div id = "line1">Coluna:
-                     <select class="selectColumn">
-                        <option>Teste1</option>
-                        <option>Teste2</option>
-                    </select>
-                 </div>
+             <div class="col-3 menuBox">
+                 <div class = 'block'>Dataset:</div>
+                 <form action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <input type="file" name="csvfile" id="file" accept="text/csv" class="inputfile" onchange="this.form.submit()"/>
+                    <label for="file">Escolher</label>
+                 </form>
+             </div>
+             <div class="col-5 menuBox">
+                <div class = 'block'>
+                     <div id = "line1">Coluna:
+                         <select class="selectColumn">
+                            <option>Teste1</option>
+                            <option>Teste2</option>
+                        </select>
+                     </div>
 
-                <div id = "line2">Linha:
-                    <select class="selectColumn">
-                        <option>Linha teste1</option>
-                        <option>Linha teste2</option>
-                    </select>
+                    <div id = "line2">Linha:
+                        <select class="selectColumn">
+                            <option>Linha teste1</option>
+                            <option>Linha teste2</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-         </div>
-         <div class="col-2 menuBox">
-            <div class = 'block export'>Exportar:
-                <div class="downloadButton"> <button><img src="{% static '/img/arrow.png' %}"></button></div>
-            </div>
+             </div>
+             <div class="col-2 menuBox">
+                <div class = 'block export'>Exportar:
+                    <div class="downloadButton"> <button><img src="{% static '/img/arrow.png' %}"></button></div>
+                </div>
+             </div>
          </div>
     </div>
-</div>
 
-<div class="container2">
-    {% comment %}<div>
-        <p>This is a chart</p>
-        {% render_chart chart %}
-    </div>{% endcomment %}
+    <div class="container2">
+        {% for message in messages %}
+            {% include "error.html" %}
+        {% endfor %}
+        {% comment %}<div>
+            <p>This is a chart</p>
+            {% render_chart chart %}
+        </div>{% endcomment %}
 
-  {% comment %}  <div class="chart">
-        <p>Gráfico de Dispersão</p>
-        {% render_chart chart2 %}
-    </div>{% endcomment %}
+      {% comment %}  <div class="chart">
+            <p>Gráfico de Dispersão</p>
+            {% render_chart chart2 %}
+        </div>{% endcomment %}
+    </div>
 </div>
 {% endblock %}

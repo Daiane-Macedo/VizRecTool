@@ -42,7 +42,18 @@ body{
 .inputfile + label:hover {
   box-shadow: 0 0 11px rgba(33,33,33,.2);
 }
-
+#error{
+    background: #FFFFFF;
+    box-shadow: -2px 1px 5px rgba(0, 0, 0, 0.1);
+    margin: 10% auto auto auto;
+    color: #ff0000;
+    width: 30%;
+    position: relative;
+    height: 160px;
+    line-height: 160px;
+    text-align: center;
+    font-weight: bold;
+}
 .menuBox{
    /* border: 1px solid lightslategray;*/
     background: #FFFFFF;

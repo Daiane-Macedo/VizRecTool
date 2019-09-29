@@ -9,10 +9,10 @@ class Type(object):
 
 
 def columnType(data):
+    if isNumber(data):
+        return Type.numerical
     if isDate(data):
         return Type.cDate
-    if isNumber:
-        return Type.numerical
     if isWord(data):
         return Type.categorical
     return Type.none
@@ -29,13 +29,13 @@ def isDate(field, fuzzy=False):
 
 def isNumber(s):
     try:
-        complex(s)  # for int, long, float and complex
+        complex(s)
     except ValueError:
         return False
     return True
 
 
 def isWord(field):
-    if field and field.strip():
+    if not isinstance(field, str):
         return False
     return True
