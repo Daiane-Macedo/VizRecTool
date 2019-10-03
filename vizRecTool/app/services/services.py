@@ -20,21 +20,24 @@ class FileDataService:
             return False
         fileName = fileName[:-4]
 
-        df = pd.read_csv(csvFile, nrows=25, index_col=False, encoding="ISO-8859-1")
-        df.reset_index(drop=True, inplace=True)
+        df = pd.read_csv(csvFile, nrows=20, index_col=False, encoding="ISO-8859-1", quoting=True)
         df = df.applymap(str)
+
         header = formatLine(df.columns[0:].values)
-        print(header)
-        line = formatLine(df.loc[0, :].values)
+        print("Header", header)
+        line = formatLine(df.iloc[1].values)
         categoricalColumns = []
+        numericalColumns = []
 
         for i in range(len(line)):
+            print(line[i], " == ", utils.columnType(line[i]))
             if (utils.columnType(line[i]) == utils.Type.categorical) or (utils.columnType(line[i]) == utils.Type.cDate):
-                print(line[i], " == ", utils.columnType(line[i]))
-                categoricalColumns.append(header[i])
-        print(categoricalColumns)
+                categoricalColumns.append(header[i].upper())
+            else:
+                numericalColumns.append(header[i].upper())
+        print("Categorical columns: ", categoricalColumns, "\n Quantitative columns: ", numericalColumns)
 
-        return None
+        return categoricalColumns, numericalColumns
 
 
 def findFileHeader(fileName):

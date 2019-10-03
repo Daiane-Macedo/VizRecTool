@@ -13,15 +13,19 @@ class IndexView(TemplateView):
     template_name = 'index.html'
 
     def chart(request):
-        context = locals()
+
         if request.method == 'POST':
             csvFile = request.FILES['csvfile']
             try:
-                data = FileDataService.loadData(csvFile)
+                catData, quantData = FileDataService.loadData(csvFile)
+                context = {
+                    'categoricalData': catData,
+                    'quantitativeData': quantData
+                }
             except Exception as e:
                 print(e)
                 return render(request, 'index.html', messages.error(request, "Erro ao carregar arquivo"))
-        return render(request, 'index.html')
+        return render(request, 'index.html', context)
 
     def get(self, request, *args, **kwargs):
         context = locals()

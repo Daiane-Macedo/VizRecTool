@@ -31,15 +31,17 @@
                 <div class = 'block'>
                      <div id = "line1">Coluna:
                          <select class="selectColumn">
-                            <option>Teste1</option>
-                            <option>Teste2</option>
+                             {% for c in categoricalData %}
+                                <option>{{ c }}</option>
+                            {% endfor %}
                         </select>
                      </div>
 
                     <div id = "line2">Linha:
                         <select class="selectColumn">
-                            <option>Linha teste1</option>
-                            <option>Linha teste2</option>
+                            {% for q in quantitativeData %}
+                                <option>{{ q }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
