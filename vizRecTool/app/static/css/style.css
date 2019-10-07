@@ -5,6 +5,9 @@ body{
 .container{
     min-width: 94%;
 }
+.col-8{
+   min-width: 100% !important;
+}
 .container2{
     text-align: center;
     width: 96%;
@@ -21,7 +24,8 @@ body{
 	z-index: -1;
 }
 
-.inputfile + label {
+.inputfile + label,
+.chartButton{
     transition: box-shadow .3s;
     font-size: 1em;
     font-weight: 200;
@@ -37,7 +41,10 @@ body{
     color: #FFFFFF;
   /*  transition: background-color .3s;*/
 }
-
+.chart{
+    float: right;
+    margin-top: -50px;
+}
 .inputfile:focus + label,
 .inputfile + label:hover {
   box-shadow: 0 0 11px rgba(33,33,33,.2);
@@ -70,18 +77,16 @@ body{
     min-height: 120px;
 }
 #line1, #line2{
-    height: 50%;
-}#line1{
+    width: 75%;
+}
+#line1{
     padding-bottom: 5px;
     border-bottom:1px solid rgba(0, 0, 0, 0.12);
  }
 #line2{
     padding-top: 5px;
-    padding-left: 0.75em;
 }
-#line2 select{
-    width: 45.8%;
-}
+
  .datasetOptions{
     background: #FFFFFF;
     border: 0.5px solid #e2e2e2;
@@ -107,12 +112,14 @@ body{
 .row {
     min-height: 120px;
 }
+
 .block{
     display: block;
+    width: 70%;
     margin-block-start: 1em !important;
 }
 .selectColumn{
-    width: 45%;
+    width: 60%;
     transition: box-shadow .3s;
     font-size: 1em;
     font-weight: 200;
@@ -130,12 +137,14 @@ body{
 }
 .chart{
     background: #FFFFFF;
-    min-width: 94%;
 }
 .downloadButton button img{
     width: 2em;
 }
 .export{
     text-align: center;
+}
+#chart{
+    float: right;
 }
 input, button, submit { border:none; background: none   ; }

@@ -4,6 +4,9 @@ import pandas as pd
 import altair as alt
 import sys
 
+from django.conf.global_settings import MEDIA_ROOT
+from django.core.files.storage import FileSystemStorage
+
 sys.path.append(".")
 import sys
 
@@ -14,13 +17,16 @@ import utils
 class FileDataService:
 
     def loadData(csvFile):
+        FILE_FOLDER = 'files/'
 
         fileName = csvFile.name
         if not (fileName.lower().endswith('.csv')):
             return False
         fileName = fileName[:-4]
 
-        df = pd.read_csv(csvFile, nrows=20, index_col=False, encoding="ISO-8859-1", quoting=True)
+        upload(csvFile)
+
+        df = pd.read_csv(FILE_FOLDER + csvFile.name, nrows=20, index_col=False, encoding="ISO-8859-1", quoting=True)
         df = df.applymap(str)
 
         header = formatLine(df.columns[0:].values)
@@ -38,6 +44,24 @@ class FileDataService:
         print("Categorical columns: ", categoricalColumns, "\n Quantitative columns: ", numericalColumns)
 
         return categoricalColumns, numericalColumns
+
+
+def upload(file):
+    print(file.name)
+    folder = 'files/'
+    fs = FileSystemStorage(location=folder)  # defaults to   MEDIA_ROOT
+    filename = fs.save(file.name, file)
+    file_url = fs.url(filename)
+    return file_url
+
+    # def upload(request):
+    #     folder = 'files/'
+    #     if request.method == 'POST':
+    #         myfile = request.FILES['csvfile']
+    #         fs = FileSystemStorage(location=folder)  # defaults to   MEDIA_ROOT
+    #         filename = fs.save(myfile.name, myfile)
+    #         file_url = fs.url(filename)
+    #         return file_url
 
 
 def findFileHeader(fileName):

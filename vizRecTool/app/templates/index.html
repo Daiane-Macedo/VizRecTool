@@ -22,27 +22,35 @@
             </div>
              <div class="col-3 menuBox">
                  <div class = 'block'>Dataset:</div>
-                 <form action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                 <form action="{% url "app:file" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
                     <input type="file" name="csvfile" id="file" accept="text/csv" class="inputfile" onchange="this.form.submit()"/>
                     <label for="file">Escolher</label>
                  </form>
              </div>
              <div class="col-5 menuBox">
-                <div class = 'block'>
-                     <div id = "line1">Coluna:
+                    <div class = 'col-8 block'>
+                     <div id = "line1">Variável Y:
                          <select class="selectColumn">
-                             {% for c in categoricalData %}
-                                <option>{{ c }}</option>
+                             {% for q in quantitativeData %}
+                                <option>{{ q }}</option>
                             {% endfor %}
                         </select>
                      </div>
 
-                    <div id = "line2">Linha:
+                    <div id = "line2">Variável X:
                         <select class="selectColumn">
-                            {% for q in quantitativeData %}
-                                <option>{{ q }}</option>
+                            {% for c in categoricalData %}
+                                <option>{{ c }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+                    <div class = "chart">
+                        <form id="streamform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="file" value="{{ file }}" />
+                            <button type="text" class="chartButton"> Gerar</button>
+
+                        </form>
                     </div>
                 </div>
              </div>
