@@ -41,7 +41,7 @@ body{
     color: #FFFFFF;
   /*  transition: background-color .3s;*/
 }
-.chart{
+.generateBtn{
     float: right;
     margin-top: -50px;
 }
@@ -136,7 +136,7 @@ body{
 .selectColumn:hover{
      box-shadow: 0 0 5px rgba(33,33,33,.2);
 }
-.chart{
+.generateBtn{
     background: #FFFFFF;
 }
 .downloadButton button img{
@@ -145,7 +145,5 @@ body{
 .export{
     text-align: center;
 }
-#chart{
-    float: right;
-}
+
 input, button, submit { border:none; background: none   ; }

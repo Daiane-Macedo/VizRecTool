@@ -1,12 +1,9 @@
 import csv
 import itertools
 import os
-
 import pandas as pd
 import altair as alt
 import sys
-
-from django.conf.global_settings import MEDIA_ROOT
 from django.core.files.storage import FileSystemStorage
 
 sys.path.append(".")
@@ -30,7 +27,8 @@ class FileData:
         if not (os.path.isfile(filePath)):
             upload(csvFile)
 
-        df = pd.read_csv(FileData.FILE_FOLDER + csvFile.name, nrows=5, index_col=False, encoding="ISO-8859-1", quoting=True, engine='c')
+        df = pd.read_csv(FileData.FILE_FOLDER + csvFile.name, nrows=5, index_col=False, encoding="ISO-8859-1",
+                         quoting=True, engine='c')
         df = df.applymap(str)
 
         header = formatLine(df.columns[0:].values)
@@ -47,19 +45,18 @@ class FileData:
 
 class Chart:
 
-    def buildChart(csvFile):
+    def buildChart(csvFile, xAxis, yAxis):
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
 
-        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True,  engine='c').replace("'", '', regex=True)
+        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True, engine='c', error_bad_lines = False)
         df = cleanDataFrame(df)
 
         line = formatLine(df.iloc[1].values)
-
         header = formatLine(df.columns[0:].values)
-        print("Header", header)
         chartColumns = categorizeColumns(line, header)
+        print(chartColumns.categorical)
 
         return df
 
@@ -68,7 +65,7 @@ def categorizeColumns(line, header):
     columns = utils.Columns()
 
     for i in range(len(line)):
-        #print(line[i], " == ", utils.columnType(line[i]))
+        # print(line[i], " == ", utils.columnType(line[i]))
 
         if utils.columnType(line[i]) == utils.Type.categorical:
             columns.categorical.append(header[i].upper())
@@ -89,7 +86,6 @@ def cleanDataFrame(df):
 
 
 def upload(file):
-    print(file.name)
     folder = 'files/'
     fs = FileSystemStorage(location=folder)  # defaults to   MEDIA_ROOT
     filename = fs.save(file.name, file)

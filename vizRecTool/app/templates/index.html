@@ -28,29 +28,28 @@
                  </form>
              </div>
              <div class="col-5 menuBox">
-                    <div class = 'col-8 block'>
-                     <div id = "line1">Variável Y:
-                         <select class="selectColumn">
-                             {% for q in quantitativeData %}
-                                <option>{{ q }}</option>
-                            {% endfor %}
-                        </select>
-                     </div>
-
-                    <div id = "line2">Variável X:
-                        <select class="selectColumn">
-                            {% for c in categoricalData %}
-                                <option>{{ c }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class = "chart">
-                        <form id="streamform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
+                 <div class = 'col-8 block'>
+                    <form id="streamform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
+                        <div id = "line1">Variável Y:
+                             <select class="selectColumn" name="selectedY">
+                                 {% for q in quantitativeData %}
+                                    <option>{{ q }}</option>
+                                 {% endfor %}
+                             </select>
+                        </div>
+                        <div id = "line2">Variável X:
+                            <select class="selectColumn" name="selectedX">
+                                {% for c in categoricalData %}
+                                    <option>{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class = "generateBtn">
                             {% csrf_token %}
                             <button type="text" name="fileBtn" value="{{ filePath }}"class="chartButton"> Gerar </button>
-                        </form>
-                    </div>
-                </div>
+                        </div>
+                    </form>
+                 </div>
              </div>
              <div class="col-2 menuBox">
                 <div class = 'block export'>Exportar:
