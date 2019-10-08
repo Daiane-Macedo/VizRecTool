@@ -131,6 +131,7 @@ body{
     background-color: #ffff;
     color: #6b6b6b;
     border: 1px solid #bdbaba;
+    text-transform: uppercase;
 }
 .selectColumn:hover{
      box-shadow: 0 0 5px rgba(33,33,33,.2);

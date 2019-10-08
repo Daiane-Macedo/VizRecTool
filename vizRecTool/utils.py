@@ -8,6 +8,13 @@ class Type(object):
     cDate = 3
 
 
+class Columns:
+    def __init__(self):
+        self.categorical = []
+        self.date = []
+        self.numerical = []
+
+
 def columnType(data):
     if isNumber(data):
         return Type.numerical

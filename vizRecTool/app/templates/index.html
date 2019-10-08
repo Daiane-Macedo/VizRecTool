@@ -47,9 +47,7 @@
                     <div class = "chart">
                         <form id="streamform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <input type="hidden" name="file" value="{{ file }}" />
-                            <button type="text" class="chartButton"> Gerar</button>
-
+                            <button type="text" name="fileBtn" value="{{ filePath }}"class="chartButton"> Gerar </button>
                         </form>
                     </div>
                 </div>
