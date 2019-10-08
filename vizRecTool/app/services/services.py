@@ -1,5 +1,7 @@
 import csv
 import itertools
+import os
+
 import pandas as pd
 import altair as alt
 import sys
@@ -20,12 +22,15 @@ class FileData:
     def loadData(csvFile):
 
         fileName = csvFile.name
-        if not (fileName.lower().endswith('.csv')):
-            return False
-        fileName = fileName[:-4]
+        filePath = FileData.FILE_FOLDER + csvFile.name
 
-        upload(csvFile)
-        df = pd.read_csv(FileData.FILE_FOLDER + csvFile.name, nrows=5, index_col=False, encoding="ISO-8859-1", quoting=True)
+        if not (fileName.lower().endswith('.csv')):
+            raise Exception('Tipo de arquivo inválido. Insira um ".csv"')
+
+        if not (os.path.isfile(filePath)):
+            upload(csvFile)
+
+        df = pd.read_csv(FileData.FILE_FOLDER + csvFile.name, nrows=5, index_col=False, encoding="ISO-8859-1", quoting=True, engine='c')
         df = df.applymap(str)
 
         header = formatLine(df.columns[0:].values)
@@ -43,15 +48,19 @@ class FileData:
 class Chart:
 
     def buildChart(csvFile):
-        filePath = FileData.FILE_FOLDER + csvFile
-        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True).replace("'", '', regex=True)
+        fileName = csvFile
+        filePath = FileData.FILE_FOLDER + fileName
+        fileName = fileName[:-4]
+
+        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True,  engine='c').replace("'", '', regex=True)
         df = cleanDataFrame(df)
 
         line = formatLine(df.iloc[1].values)
 
         header = formatLine(df.columns[0:].values)
         print("Header", header)
-        value = categorizeColumns(line, header)
+        chartColumns = categorizeColumns(line, header)
+
         return df
 
 

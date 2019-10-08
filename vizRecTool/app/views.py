@@ -29,16 +29,15 @@ class IndexView(TemplateView):
                 }
             except Exception as e:
                 print(e)
-                return render(request, 'index.html', messages.error(request, "Erro ao carregar arquivo"))
+                return render(request, IndexView.template_name, messages.error(request, "Erro ao carregar arquivo"))
 
-            return render(request, 'index.html', context)
+            return render(request, IndexView.template_name, context)
 
     def chart(request):
 
         if 'fileBtn' in request.POST:
             csvFile = request.POST.get("fileBtn")
             result = Chart.buildChart(csvFile)
-            print("RESULT", result)
 
              # context = locals()
              # data3 = pd.DataFrame({
@@ -59,7 +58,7 @@ class IndexView(TemplateView):
              #     color='Origin'
              # ).interactive()
 
-            return None
+            return render(request, IndexView.template_name)
 
 
 class Type(object):
