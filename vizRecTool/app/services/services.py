@@ -27,19 +27,20 @@ class FileData:
         if not (os.path.isfile(filePath)):
             upload(csvFile)
 
-        df = pd.read_csv(FileData.FILE_FOLDER + csvFile.name, nrows=5, index_col=False, encoding="ISO-8859-1",
-                         quoting=True, engine='c')
+        delimiter = detectDelimiter(filePath)
+        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding="ISO-8859-1",
+                         sep=delimiter)
+        df = df.replace({'\'': '"'}, regex=True)
         df = df.applymap(str)
 
-        header = formatLine(df.columns[0:].values)
-        line = formatLine(df.iloc[1].values)
-
+        header = df.columns.values
+        line = df.iloc[1].values
         columns = categorizeColumns(line, header)
         categoricalColumns = columns.categorical
         categoricalColumns.extend(columns.date)
         numericalColumns = columns.numerical
 
-        # print("Categorical: ", categoricalColumns, "Numerical:", numericalColumns)
+        print("Categorical: ", categoricalColumns, "Numerical:", numericalColumns)
         return categoricalColumns, numericalColumns
 
 
@@ -50,7 +51,8 @@ class Chart:
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
 
-        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True, engine='c', error_bad_lines = False)
+        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True, engine='c',
+                         error_bad_lines=False)
         df = cleanDataFrame(df)
 
         line = formatLine(df.iloc[1].values)
@@ -65,11 +67,10 @@ def categorizeColumns(line, header):
     columns = utils.Columns()
 
     for i in range(len(line)):
-        # print(line[i], " == ", utils.columnType(line[i]))
 
-        if utils.columnType(line[i]) == utils.Type.categorical:
+        if utils.columnType(line[i].strip()) == utils.Type.categorical:
             columns.categorical.append(header[i].upper())
-        elif utils.columnType(line[i]) == utils.Type.cDate:
+        elif utils.columnType(line[i].strip()) == utils.Type.cDate:
             columns.date.append(header[i].upper())
         else:
             columns.numerical.append(header[i].upper())
@@ -96,16 +97,20 @@ def upload(file):
 def formatLine(line):
     line = ''.join(line)
     delimiter = detectDelimiter(line)
-
+    print(delimiter)
     formattedLine = line.replace('"', '').replace("'", "").split(delimiter)
-    formattedLine = formattedLine[0:]
+    # formattedLine = formattedLine[0:]
+    print("retorno", formattedLine)
+
     return formattedLine
 
 
 def detectDelimiter(csvFile):
-    if csvFile.find(";") != -1:
-        return ";"
-    if csvFile.find(",") != -1:
-        return ","
+    with open(csvFile, 'r', encoding="ISO-8859-1") as myCsvfile:
+        header = myCsvfile.readline()
+        if header.find(";") != -1:
+            return ";"
+        if header.find(",") != -1:
+            return ","
     # default delimiter (MS Office export)
     return ";"

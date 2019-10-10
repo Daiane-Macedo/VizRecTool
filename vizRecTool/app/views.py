@@ -23,8 +23,9 @@ class IndexView(TemplateView):
                 context = {
                     'categoricalData': catData,
                     'quantitativeData': quantData,
-                    'filePath': csvFile.name,
+                    'filePath': csvFile.name
                 }
+
             except Exception as e:
                 print(e)
                 return render(request, IndexView.template_name, messages.error(request, "Erro ao carregar arquivo"))

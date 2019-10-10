@@ -1,3 +1,5 @@
+import re
+
 from dateutil.parser import parse
 
 
@@ -16,7 +18,8 @@ class Columns:
 
 
 def columnType(data):
-    if isNumber(data):
+    regNumber = re.compile(r"(\d),(\d)")  # looks for numbers with commas
+    if regNumber.search(data) or isNumber(data):
         return Type.numerical
     if isDate(data):
         return Type.cDate
