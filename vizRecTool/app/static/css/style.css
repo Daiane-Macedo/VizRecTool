@@ -118,7 +118,7 @@ body{
     width: 70%;
     margin-block-start: 1em !important;
 }
-.selectColumn{
+.selectOptions{
     width: 60%;
     transition: box-shadow .3s;
     font-size: 1em;
@@ -133,7 +133,7 @@ body{
     border: 1px solid #bdbaba;
     text-transform: uppercase;
 }
-.selectColumn:hover{
+.selectOptions:hover{
      box-shadow: 0 0 5px rgba(33,33,33,.2);
 }
 .generateBtn{
@@ -144,6 +144,8 @@ body{
 }
 .export{
     text-align: center;
+    display: none;
+
 }
 
 input, button, submit { border:none; background: none   ; }

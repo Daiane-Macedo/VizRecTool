@@ -16,8 +16,8 @@ class IndexView(TemplateView):
     def file(request):
 
         if request.method == 'POST':
-
             csvFile = request.FILES['csvfile']
+
             try:
                 catData, quantData = FileData.loadData(csvFile)
                 context = {
@@ -25,7 +25,6 @@ class IndexView(TemplateView):
                     'quantitativeData': quantData,
                     'filePath': csvFile.name
                 }
-
             except Exception as e:
                 print(e)
                 return render(request, IndexView.template_name, messages.error(request, "Erro ao carregar arquivo"))
@@ -41,32 +40,26 @@ class IndexView(TemplateView):
                 raise Exception('Variável X ou Y não recebida')
 
             csvFile = request.POST.get("fileBtn")
-            result = Chart.buildChart(csvFile, xAxis, yAxis)
+            resultChart = Chart.buildChart(csvFile, xAxis, yAxis)
 
-                 # context = locals()
+            context = locals()
+            context['chart'] = resultChart
                  # data3 = pd.DataFrame({
                  #     'Eixo x': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
                  #     'Eixo y': [28, 55, 43, 91, 81, 53, 19, 87, 52]
                  # })
                  #
-                 # context['chart'] = alt.Chart(data3).mark_bar().encode(
+                 #context['chart'] = alt.Chart(data3).mark_bar().encode(
                  #     x='Eixo x',
                  #     y='Eixo y'
                  # ).interactive()
-                 #
-                 # source = data.cars()
-                 # # print(data.cars());
-                 # context['chart2'] = alt.Chart(source).mark_circle().encode(
-                 #     x='Horsepower',
-                 #     y='Miles_per_Gallon',
-                 #     color='Origin'
-                 # ).interactive()
+
 
         except Exception as e:
             print(e)
             return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))
 
-        return render(request, IndexView.template_name)
+        return render(request, IndexView.template_name, context)
 
 
 class Type(object):

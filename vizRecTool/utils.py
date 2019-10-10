@@ -1,6 +1,7 @@
 import re
 
 from dateutil.parser import parse
+from django import forms
 
 
 class Type(object):
@@ -9,15 +10,19 @@ class Type(object):
     numerical = 2
     cDate = 3
 
-
 class Columns:
     def __init__(self):
         self.categorical = []
         self.date = []
-        self.numerical = []
+        self.quantitative = []
 
+class fileForm(forms.Form):
+    selectedY: forms.CharField()
+    selectedX: forms.CharField()
+    selectColumn: forms.CharField()
 
 def columnType(data):
+    data = str(data).strip()
     regNumber = re.compile(r"(\d),(\d)")  # looks for numbers with commas
     if regNumber.search(data) or isNumber(data):
         return Type.numerical

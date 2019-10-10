@@ -29,16 +29,16 @@
              </div>
              <div class="col-5 menuBox">
                  <div class = 'col-8 block'>
-                    <form id="streamform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
+                    <form id="fileform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
                         <div id = "line1">Variável Y:
-                             <select class="selectColumn" name="selectedY">
+                             <select class="selectOptions" name="selectedY">
                                  {% for q in quantitativeData %}
                                     <option>{{ q }}</option>
                                  {% endfor %}
                              </select>
                         </div>
                         <div id = "line2">Variável X:
-                            <select class="selectColumn" name="selectedX">
+                            <select class="selectOptions" name="selectedX">
                                 {% for c in categoricalData %}
                                     <option>{{ c }}</option>
                                 {% endfor %}

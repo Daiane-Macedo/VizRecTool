@@ -1,10 +1,8 @@
-import csv
-import itertools
+from django.core.files.storage import FileSystemStorage
 import os
 import pandas as pd
 import altair as alt
 import sys
-from django.core.files.storage import FileSystemStorage
 
 sys.path.append(".")
 import sys
@@ -36,44 +34,69 @@ class FileData:
         header = df.columns.values
         line = df.iloc[1].values
         columns = categorizeColumns(line, header)
+        quantitativeColumns = columns.quantitative
         categoricalColumns = columns.categorical
         categoricalColumns.extend(columns.date)
-        numericalColumns = columns.numerical
+        # categoricalColumns.extend(columns.quantitative)
 
-        print("Categorical: ", categoricalColumns, "Numerical:", numericalColumns)
-        return categoricalColumns, numericalColumns
+        print("Categorical: ", categoricalColumns, "Numerical:", quantitativeColumns)
+        return categoricalColumns, quantitativeColumns
 
 
 class Chart:
+    pie = 1
+    bar = 2
+    columns = 2
+    line = 3
 
     def buildChart(csvFile, xAxis, yAxis):
+        chart = None
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
 
-        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", quoting=True, engine='c',
-                         error_bad_lines=False)
-        df = cleanDataFrame(df)
+        delimiter = detectDelimiter(filePath)
+        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding="ISO-8859-1", sep=delimiter)
+        df = df.replace({'\'': '"'}, regex=True)
 
-        line = formatLine(df.iloc[1].values)
-        header = formatLine(df.columns[0:].values)
-        chartColumns = categorizeColumns(line, header)
-        print(chartColumns.categorical)
+        header = df.columns.values
+        line = df.iloc[1].values
+        col = categorizeColumns(line, header)
 
-        return df
+        if xAxis in col.categorical and yAxis in col.quantitative:  # bar
+            chart = alt.Chart(df).mark_bar().encode(
+                x=xAxis,
+                y=yAxis
+            ).interactive()
+
+        if xAxis in col.date and yAxis in col.quantitative:  # line
+            chart = alt.Chart(df).mark_line()().encode(
+                x=xAxis,
+                y=yAxis
+            ).interactive()
+
+        if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
+            chart = alt.Chart(df).mark_circle().encode(
+                x=xAxis,
+                y=yAxis
+            ).interactive()
+
+        print("Categoricas", col.categorical, "Data", col.date, "Numéricas", col.quantitative)
+        print(chart)
+        return chart
 
 
 def categorizeColumns(line, header):
     columns = utils.Columns()
 
     for i in range(len(line)):
-
-        if utils.columnType(line[i].strip()) == utils.Type.categorical:
+        print(line[i])
+        if utils.columnType(line[i]) == utils.Type.categorical:
             columns.categorical.append(header[i].upper())
-        elif utils.columnType(line[i].strip()) == utils.Type.cDate:
+        elif utils.columnType(line[i]) == utils.Type.cDate:
             columns.date.append(header[i].upper())
         else:
-            columns.numerical.append(header[i].upper())
+            columns.quantitative.append(header[i].upper())
 
     # print("Categorical columns: ", columns.categorical, "\n Quantitative columns: ", columns.numerical, "\n Date columns: ", columns.date)
     return columns
@@ -97,7 +120,6 @@ def upload(file):
 def formatLine(line):
     line = ''.join(line)
     delimiter = detectDelimiter(line)
-    print(delimiter)
     formattedLine = line.replace('"', '').replace("'", "").split(delimiter)
     # formattedLine = formattedLine[0:]
     print("retorno", formattedLine)
