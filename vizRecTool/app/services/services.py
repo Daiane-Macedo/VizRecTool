@@ -30,6 +30,7 @@ class FileData:
                          sep=delimiter)
         df = df.replace({'\'': '"'}, regex=True)
         df = df.applymap(str)
+        df.columns = map(str.upper, df.columns)
 
         header = df.columns.values
         line = df.iloc[1].values
@@ -56,27 +57,34 @@ class Chart:
         fileName = fileName[:-4]
 
         delimiter = detectDelimiter(filePath)
-        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding="ISO-8859-1", sep=delimiter)
+        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", sep=delimiter)
         df = df.replace({'\'': '"'}, regex=True)
+        df.columns = map(str.upper, df.columns)
 
         header = df.columns.values
         line = df.iloc[1].values
         col = categorizeColumns(line, header)
+        for date in col.date:
+            df[date] = pd.to_datetime(df[date])
+            print(df[date])
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
-            chart = alt.Chart(df).mark_bar().encode(
+            chart = alt.Chart(df, title=fileName).mark_bar().encode(
                 x=xAxis,
                 y=yAxis
             ).interactive()
 
         if xAxis in col.date and yAxis in col.quantitative:  # line
-            chart = alt.Chart(df).mark_line()().encode(
+            chart = alt.Chart(df, title=fileName).mark_line().encode(
                 x=xAxis,
                 y=yAxis
-            ).interactive()
+            ).interactive().properties(
+                width=600,
+                height=300
+            )
 
         if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
-            chart = alt.Chart(df).mark_circle().encode(
+            chart = alt.Chart(df, title=fileName).mark_circle().encode(
                 x=xAxis,
                 y=yAxis
             ).interactive()

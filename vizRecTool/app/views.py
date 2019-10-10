@@ -44,16 +44,6 @@ class IndexView(TemplateView):
 
             context = locals()
             context['chart'] = resultChart
-                 # data3 = pd.DataFrame({
-                 #     'Eixo x': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
-                 #     'Eixo y': [28, 55, 43, 91, 81, 53, 19, 87, 52]
-                 # })
-                 #
-                 #context['chart'] = alt.Chart(data3).mark_bar().encode(
-                 #     x='Eixo x',
-                 #     y='Eixo y'
-                 # ).interactive()
-
 
         except Exception as e:
             print(e)

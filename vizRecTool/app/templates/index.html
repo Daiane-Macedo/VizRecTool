@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% comment %}{% load django_altair %}{% endcomment %}
+{% load django_altair %}
 
 {% load static %}
 {% block script %}
@@ -46,7 +46,7 @@
                         </div>
                         <div class = "generateBtn">
                             {% csrf_token %}
-                            <button type="text" name="fileBtn" value="{{ filePath }}"class="chartButton"> Gerar </button>
+                            <button type="text" name="fileBtn" value="{{ filePath }}"class="chartButton"> Gerar Gráfico</button>
                         </div>
                     </form>
                  </div>
@@ -63,15 +63,13 @@
         {% for message in messages %}
             {% include "error.html" %}
         {% endfor %}
-        {% comment %}<div>
-            <p>This is a chart</p>
-            {% render_chart chart %}
-        </div>{% endcomment %}
 
-      {% comment %}  <div class="chart">
-            <p>Gráfico de Dispersão</p>
-            {% render_chart chart2 %}
-        </div>{% endcomment %}
+        {% if chart %}
+            <div class="chart">
+                {% render_chart chart %}
+            </div>
+
+        {% endif %}
     </div>
-</div>
 {% endblock %}
+</div>
