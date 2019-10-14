@@ -67,8 +67,10 @@ body{
 #error{
     background: #FFFFFF;
     box-shadow: -2px 1px 5px rgba(0, 0, 0, 0.1);
-    margin: 10% auto auto auto;
+    border: solid;
     color: #ff0000;
+    margin: 0 auto;
+    top: 20%;
     width: 30%;
     position: relative;
     height: 160px;
