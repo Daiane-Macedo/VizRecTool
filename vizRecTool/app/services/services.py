@@ -25,15 +25,15 @@ class FileData:
         if not (os.path.isfile(filePath)):
             upload(csvFile)
 
-        delimiter = detectDelimiter(filePath)
+        delimiter = detect_delimiter(filePath)
         df = pd.read_csv(filePath, nrows=5, index_col=False, encoding='utf-8',
                          sep=delimiter)
-        df = cleanDataFrame(df)
+        df = clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
 
         header = df.columns.values
         line = df.iloc[1].values
-        columns = categorizeColumns(line, header)
+        columns = categorize_columns(line, header)
         quantitativeColumns = columns.quantitative
         categoricalColumns = columns.categorical
         categoricalColumns.extend(columns.date)
@@ -55,13 +55,13 @@ class Chart:
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
 
-        delimiter = detectDelimiter(filePath)
+        delimiter = detect_delimiter(filePath)
         df = pd.read_csv(filePath, index_col=False, encoding='utf-8', nrows=4999, sep=delimiter)
-        df = cleanDataFrame(df)
+        df = clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
         header = df.columns.values
         line = df.iloc[1].values
-        col = categorizeColumns(line, header)
+        col = categorize_columns(line, header)
         df = parse_columns(df, col)
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
@@ -100,7 +100,7 @@ def parse_columns(df, col):
     return df
 
 
-def categorizeColumns(line, header):
+def categorize_columns(line, header):
     columns = utils.Columns()
 
     for i in range(len(line)):
@@ -116,7 +116,7 @@ def categorizeColumns(line, header):
     return columns
 
 
-def cleanDataFrame(df):
+def clean_dataFrame(df):
     df = df.replace({'\'': '"'}, regex=True)
     df = df.applymap(str)
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
@@ -134,9 +134,9 @@ def upload(file):
     return file_url
 
 
-def formatLine(line):
+def format_line(line):
     line = ''.join(line)
-    delimiter = detectDelimiter(line)
+    delimiter = detect_delimiter(line)
     formattedLine = line.replace('"', '').replace("'", "").split(delimiter)
     # formattedLine = formattedLine[0:]
     print("retorno", formattedLine)
@@ -144,7 +144,7 @@ def formatLine(line):
     return formattedLine
 
 
-def detectDelimiter(csvFile):
+def detect_delimiter(csvFile):
     with open(csvFile, 'r', encoding="ISO-8859-1") as myCsvfile:
         header = myCsvfile.readline()
         if header.find(";") != -1:
