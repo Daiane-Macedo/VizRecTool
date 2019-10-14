@@ -26,10 +26,9 @@ class FileData:
             upload(csvFile)
 
         delimiter = detectDelimiter(filePath)
-        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding="ISO-8859-1",
+        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding='utf-8',
                          sep=delimiter)
-        df = df.replace({'\'': '"'}, regex=True)
-        df = df.applymap(str)
+        df = cleanDataFrame(df)
         df.columns = map(str.upper, df.columns)
 
         header = df.columns.values
@@ -57,23 +56,22 @@ class Chart:
         fileName = fileName[:-4]
 
         delimiter = detectDelimiter(filePath)
-        df = pd.read_csv(filePath, index_col=False, encoding="ISO-8859-1", sep=delimiter)
-        df = df.replace({'\'': '"'}, regex=True)
+        df = pd.read_csv(filePath, index_col=False, encoding='utf-8', nrows=4999, sep=delimiter)
+        df = cleanDataFrame(df)
         df.columns = map(str.upper, df.columns)
-
         header = df.columns.values
         line = df.iloc[1].values
         col = categorizeColumns(line, header)
-        for date in col.date:
-            df[date] = pd.to_datetime(df[date])
-            print(df[date])
+        df = parse_columns(df, col)
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
             chart = alt.Chart(df, title=fileName).mark_bar().encode(
                 x=xAxis,
                 y=yAxis
-            ).interactive()
-
+            ).interactive().properties(
+                width=600,
+                height=300
+            )
         if xAxis in col.date and yAxis in col.quantitative:  # line
             chart = alt.Chart(df, title=fileName).mark_line().encode(
                 x=xAxis,
@@ -89,9 +87,17 @@ class Chart:
                 y=yAxis
             ).interactive()
 
-        print("Categoricas", col.categorical, "Data", col.date, "Numéricas", col.quantitative)
-        print(chart)
         return chart
+
+
+def parse_columns(df, col):
+    for date in col.date:
+        df[date] = pd.to_datetime(df[date])
+
+    for quant in col.quantitative:
+        if (df[quant].str.contains(",", regex=False)).any():
+            df[quant] = df[quant].apply(lambda x: float(x.replace(".", "").replace(",", ".")))
+    return df
 
 
 def categorizeColumns(line, header):
@@ -111,9 +117,12 @@ def categorizeColumns(line, header):
 
 
 def cleanDataFrame(df):
-    df = df.apply(lambda x: x.str.strip("'"))
-    df.columns = df.columns.str.replace("'", '')
-    df.columns = df.columns.str.replace('"', '')
+    df = df.replace({'\'': '"'}, regex=True)
+    df = df.applymap(str)
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+    # df = df.apply(lambda x: x.str.strip("'"))
+    # df.columns = df.columns.str.replace("'", '')
+    # df.columns = df.columns.str.replace('"', '')
     return df
 
 
