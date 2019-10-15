@@ -8,6 +8,7 @@ from services.services import Chart
 from vega_datasets import data
 import altair as alt
 import pandas as pd
+import forms
 
 
 class IndexView(TemplateView):
@@ -32,9 +33,12 @@ class IndexView(TemplateView):
             return render(request, IndexView.template_name, context)
 
     def chart(request):
+        form = forms.fileForm(request.POST)
+        if form.is_valid():
+            xAxis = form.cleaned_data['selectedX']
+            yAxis = form.cleaned_data['selectedY']
+
         try:
-            xAxis = request.POST.get('selectedX', False)
-            yAxis = request.POST.get('selectedY', False)
             file = request.POST.get('fileBtn', False)
             if not (xAxis and yAxis and file):
                 raise Exception('Variável X ou Y não recebida')
