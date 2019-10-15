@@ -1,5 +1,6 @@
 from django.core.files.storage import FileSystemStorage
 import os
+import chardet
 import pandas as pd
 import altair as alt
 import sys
@@ -24,9 +25,10 @@ class FileData:
 
         if not (os.path.isfile(filePath)):
             upload(csvFile)
+        encode = detect_encode(filePath)
+        delimiter = detect_delimiter(filePath, encode)
 
-        delimiter = detect_delimiter(filePath)
-        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding='utf-8',
+        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding=encode['encoding'],
                          sep=delimiter)
         df = clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
@@ -55,8 +57,10 @@ class Chart:
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
 
-        delimiter = detect_delimiter(filePath)
-        df = pd.read_csv(filePath, index_col=False, encoding='utf-8', nrows=4999, sep=delimiter)
+        encode = detect_encode(filePath)
+        delimiter = detect_delimiter(filePath, encode)
+
+        df = pd.read_csv(filePath, index_col=False, encoding=encode['encoding'], nrows=4999, sep=delimiter)
         df = clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
         header = df.columns.values
@@ -144,8 +148,14 @@ def format_line(line):
     return formattedLine
 
 
-def detect_delimiter(csvFile):
-    with open(csvFile, 'r', encoding="ISO-8859-1") as myCsvfile:
+def detect_encode(csvFile):
+    with open(csvFile, 'rb') as f:
+        encode = chardet.detect(f.read())  # or readline if the file is large
+        return encode
+
+
+def detect_delimiter(csvFile, encode):
+    with open(csvFile, 'r', encoding=encode['encoding']) as myCsvfile:
         header = myCsvfile.readline()
         if header.find(";") != -1:
             return ";"
