@@ -1,0 +1,8 @@
+chardet
+utils
+python-dateutil==2.8.0
+django
+vega_datasets
+altair
+pandas
+plotly
