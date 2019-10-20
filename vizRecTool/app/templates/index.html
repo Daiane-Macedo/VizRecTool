@@ -31,13 +31,15 @@
                  <div class = 'col-8 block'>
                     <form id="fileform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
                         <div id = "line1">Variável Y:
-                             <select class="selectOptions" name="selectedY">
-                                 {% for q in quantitativeData %}
+                            <input type="hidden" name="quantitativeData" value="{{ quantitativeData }}">
+                            <select class="selectOptions" name="selectedY">
+                                {% for q in quantitativeData %}
                                     <option>{{ q }}</option>
-                                 {% endfor %}
-                             </select>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div id = "line2">Variável X:
+                            <input type="hidden" name="categoricalData" value="{{ categoricalData }}">
                             <select class="selectOptions" name="selectedX">
                                 {% for c in categoricalData %}
                                     <option>{{ c }}</option>
