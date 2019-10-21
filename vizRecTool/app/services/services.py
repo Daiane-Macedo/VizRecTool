@@ -1,9 +1,9 @@
-from django.core.files.storage import FileSystemStorage
 import os
-import chardet
 import pandas as pd
 import altair as alt
 import sys
+import plotly.offline as opy
+import plotly.graph_objs as go
 
 sys.path.append(".")
 import sys
@@ -19,18 +19,18 @@ class FileData:
 
         fileName = csvFile.name
         filePath = FileData.FILE_FOLDER + csvFile.name
-
+        print("FILENAME", fileName)
         if not (fileName.lower().endswith('.csv')):
             raise Exception('Tipo de arquivo inválido. Insira um ".csv"')
 
         if not (os.path.isfile(filePath)):
-            upload(csvFile)
-        encode = detect_encode(filePath)
-        delimiter = detect_delimiter(filePath, encode)
+            utils.upload(csvFile)
 
+        encode = utils.detect_encode(filePath)
+        delimiter = utils.detect_delimiter(filePath, encode)
         df = pd.read_csv(filePath, nrows=5, index_col=False, encoding=encode['encoding'],
                          sep=delimiter)
-        df = clean_dataFrame(df)
+        df = utils.clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
 
         header = df.columns.values
@@ -39,7 +39,7 @@ class FileData:
         quantitativeColumns = columns.quantitative
         categoricalColumns = columns.categorical
         categoricalColumns.extend(columns.date)
-        # categoricalColumns.extend(columns.quantitative)
+        categoricalColumns.extend(columns.quantitative)
 
         print("Categorical: ", categoricalColumns, "Numerical:", quantitativeColumns)
         return categoricalColumns, quantitativeColumns
@@ -57,58 +57,78 @@ class Chart:
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
 
-        encode = detect_encode(filePath)
-        delimiter = detect_delimiter(filePath, encode)
+        encode = utils.detect_encode(filePath)
+        delimiter = utils.detect_delimiter(filePath, encode)
 
         df = pd.read_csv(filePath, index_col=False, encoding=encode['encoding'], nrows=4999, sep=delimiter)
-        df = clean_dataFrame(df)
+        df = utils.clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
         header = df.columns.values
         line = df.iloc[1].values
         col = categorize_columns(line, header)
-        df = parse_columns(df, col)
+        df = utils.parse_columns(df, col)
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
-            chart = alt.Chart(df, title=fileName).mark_bar().encode(
-                x=xAxis,
-                y=yAxis
-            ).interactive().properties(
-                width=600,
-                height=300
-            )
+            data = [go.Bar(
+                x=df[xAxis],
+                y=df[yAxis],
+                showlegend=True, name=yAxis
+            )]
+            layout = go.Layout(title=fileName)
+            figure = go.Figure(data=data, layout=layout)
+            chart = opy.plot(figure, auto_open=False, output_type='div')
+
+            return chart
+
         if xAxis in col.date and yAxis in col.quantitative:  # line
-            chart = alt.Chart(df, title=fileName).mark_line().encode(
-                x=xAxis,
-                y=yAxis
-            ).interactive().properties(
-                width=600,
-                height=300
+            trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
+                                marker=dict(symbol='circle'),
+                                mode='lines+markers',
+                                line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
+            data = [trace1]
+            layout = go.Layout(
+                title=fileName,
+                xaxis=go.layout.XAxis(
+                    title=go.layout.xaxis.Title(text=xAxis),
+                    autorange=True, ticks='', showgrid=False, zeroline=False
+                ),
+                yaxis=go.layout.YAxis(
+                    title=go.layout.yaxis.Title(text=yAxis),
+                    autorange=True, ticks='', zeroline=False, tickformat=None
+                )
             )
+            figure = go.Figure(data=data, layout=layout)
+            chart = opy.plot(figure, auto_open=False, output_type='div')
+
+            return chart
 
         if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
-            chart = alt.Chart(df, title=fileName).mark_circle().encode(
-                x=xAxis,
-                y=yAxis
-            ).interactive()
+            trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
+                                marker=dict(symbol='circle'),
+                                mode='markers',
+                                line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
+            data = [trace1]
+            layout = go.Layout(
+                title=fileName,
+                xaxis=go.layout.XAxis(
+                    title=go.layout.xaxis.Title(text=xAxis),
+                    autorange=True, ticks='', showgrid=False, zeroline=False
+                ),
+                yaxis=go.layout.YAxis(
+                    title=go.layout.yaxis.Title(text=yAxis),
+                    autorange=True, ticks='', zeroline=False, tickformat=None
+                )
+            )
+            figure = go.Figure(data=data, layout=layout)
+            chart = opy.plot(figure, auto_open=False, output_type='div')
 
         return chart
-
-
-def parse_columns(df, col):
-    for date in col.date:
-        df[date] = pd.to_datetime(df[date])
-
-    for quant in col.quantitative:
-        if (df[quant].str.contains(",", regex=False)).any():
-            df[quant] = df[quant].apply(lambda x: float(x.replace(".", "").replace(",", ".")))
-    return df
 
 
 def categorize_columns(line, header):
     columns = utils.Columns()
 
     for i in range(len(line)):
-        print(line[i])
         if utils.columnType(line[i]) == utils.Type.categorical:
             columns.categorical.append(header[i].upper())
         elif utils.columnType(line[i]) == utils.Type.cDate:
@@ -118,48 +138,3 @@ def categorize_columns(line, header):
 
     # print("Categorical columns: ", columns.categorical, "\n Quantitative columns: ", columns.numerical, "\n Date columns: ", columns.date)
     return columns
-
-
-def clean_dataFrame(df):
-    df = df.replace({'\'': '"'}, regex=True)
-    df = df.applymap(str)
-    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-    # df = df.apply(lambda x: x.str.strip("'"))
-    # df.columns = df.columns.str.replace("'", '')
-    # df.columns = df.columns.str.replace('"', '')
-    return df
-
-
-def upload(file):
-    folder = 'files/'
-    fs = FileSystemStorage(location=folder)  # defaults to   MEDIA_ROOT
-    filename = fs.save(file.name, file)
-    file_url = fs.url(filename)
-    return file_url
-
-
-def format_line(line):
-    line = ''.join(line)
-    delimiter = detect_delimiter(line)
-    formattedLine = line.replace('"', '').replace("'", "").split(delimiter)
-    # formattedLine = formattedLine[0:]
-    print("retorno", formattedLine)
-
-    return formattedLine
-
-
-def detect_encode(csvFile):
-    with open(csvFile, 'rb') as f:
-        encode = chardet.detect(f.read())  # or readline if the file is large
-        return encode
-
-
-def detect_delimiter(csvFile, encode):
-    with open(csvFile, 'r', encoding=encode['encoding']) as myCsvfile:
-        header = myCsvfile.readline()
-        if header.find(";") != -1:
-            return ";"
-        if header.find(",") != -1:
-            return ","
-    # default delimiter (MS Office export)
-    return ";"

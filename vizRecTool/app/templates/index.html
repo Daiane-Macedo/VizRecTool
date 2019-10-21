@@ -67,9 +67,10 @@
         {% endfor %}
 
         {% if chart %}
-            <div class="chart">
-                {% render_chart chart %}
-            </div>
+          <div style="width:600;height:500">
+            {{ chart|safe }}
+          </div>
+{#            {% render_chart chart %}#}
 
         {% endif %}
     </div>

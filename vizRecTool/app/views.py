@@ -11,6 +11,7 @@ import pandas as pd
 import forms
 
 
+
 class IndexView(TemplateView):
     template_name = 'index.html'
 
@@ -34,9 +35,9 @@ class IndexView(TemplateView):
 
     def chart(request):
         form = forms.fileForm(request.POST or None)
+        print("FORM", form)
         quantitative = request.POST.getlist('quantitativeData')[0]
         categorical = request.POST.getlist('categoricalData')[0]
-        print(quantitative)
 
         if form.is_valid():
             xAxis = form.cleaned_data['selectedX']
@@ -50,15 +51,16 @@ class IndexView(TemplateView):
 
             csvFile = request.POST.get("fileBtn")
             resultChart = Chart.buildChart(csvFile, xAxis, yAxis)
-
+            # context['graph']
             context = locals()
             context = {
                 'chart': resultChart,
                 'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
-                'categoricalData': eval('[' + context['categorical'] + ']')[0], 'filePath': file,
+                'categoricalData': eval('[' + context['categorical'] + ']')[0],
+                'filePath': file,
             }
 
-            print(context)
+            print("context: ", context)
         except Exception as e:
             print("Exception", e)
             return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))

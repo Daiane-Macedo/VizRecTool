@@ -10,6 +10,13 @@ body{
     height: 100%;
     width: 100%;
 }
+.vega-embed{
+    height: 70% !important;
+}
+canvas.marks {
+    max-width: 100%!important;
+    height: auto!important;
+}
 #page-wrapper{
     height: 100%;
     width: 100%;
