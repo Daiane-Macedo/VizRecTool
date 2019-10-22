@@ -66,13 +66,13 @@
             {% include "error.html" %}
         {% endfor %}
 
-        {% if chart %}
-          <div style="width:600;height:500">
-            {{ chart|safe }}
-          </div>
-{#            {% render_chart chart %}#}
+       {% comment %} {% for c in chart %}{% endcomment %}
+            <div style="width:600;height:500">
+                {{ chart|safe }}
+            </div>
+{#        {% endfor %}#}
 
-        {% endif %}
+
     </div>
 {% endblock %}
 </div>

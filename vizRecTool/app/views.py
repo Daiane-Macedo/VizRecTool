@@ -35,7 +35,6 @@ class IndexView(TemplateView):
 
     def chart(request):
         form = forms.fileForm(request.POST or None)
-        print("FORM", form)
         quantitative = request.POST.getlist('quantitativeData')[0]
         categorical = request.POST.getlist('categoricalData')[0]
 
@@ -51,7 +50,7 @@ class IndexView(TemplateView):
 
             csvFile = request.POST.get("fileBtn")
             resultChart = Chart.buildChart(csvFile, xAxis, yAxis)
-            # context['graph']
+            print('TAMANHO', resultChart)
             context = locals()
             context = {
                 'chart': resultChart,
@@ -60,7 +59,7 @@ class IndexView(TemplateView):
                 'filePath': file,
             }
 
-            print("context: ", context)
+            #print("context: ", context)
         except Exception as e:
             print("Exception", e)
             return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))

@@ -38,11 +38,10 @@ def parse_columns(df, col):
 
 
 def clean_dataFrame(df):
-    print(1)
     try:
         df = df.str.replace({'\'': '"'}, regex=True)
     except Exception as e:
-        print("Não é string. ", e)
+        print(e)
     df = df.applymap(str)
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
     return df

@@ -19,7 +19,7 @@ class FileData:
 
         fileName = csvFile.name
         filePath = FileData.FILE_FOLDER + csvFile.name
-        print("FILENAME", fileName)
+
         if not (fileName.lower().endswith('.csv')):
             raise Exception('Tipo de arquivo inválido. Insira um ".csv"')
 
@@ -28,10 +28,15 @@ class FileData:
 
         encode = utils.detect_encode(filePath)
         delimiter = utils.detect_delimiter(filePath, encode)
-        df = pd.read_csv(filePath, nrows=5, index_col=False, encoding=encode['encoding'],
+        df = pd.read_csv(filePath, nrows=50, index_col=False, encoding=encode['encoding'],
                          sep=delimiter)
         df = utils.clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
+        print(df.columns)
+        print(df.iloc[0:10, 0:10])
+
+        grouped_df = df.groupby(['ÓRGÃO SUPERIOR'])
+        print(grouped_df.first())
 
         header = df.columns.values
         line = df.iloc[1].values
@@ -53,6 +58,7 @@ class Chart:
 
     def buildChart(csvFile, xAxis, yAxis):
         chart = None
+        chartsList = []
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
@@ -74,32 +80,30 @@ class Chart:
                 y=df[yAxis],
                 showlegend=True, name=yAxis
             )]
-            layout = go.Layout(title=fileName)
+            layout = getLayout(xAxis, yAxis, fileName)
             figure = go.Figure(data=data, layout=layout)
             chart = opy.plot(figure, auto_open=False, output_type='div')
 
             return chart
 
         if xAxis in col.date and yAxis in col.quantitative:  # line
-            trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
-                                marker=dict(symbol='circle'),
-                                mode='lines+markers',
-                                line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
-            data = [trace1]
-            layout = go.Layout(
-                title=fileName,
-                xaxis=go.layout.XAxis(
-                    title=go.layout.xaxis.Title(text=xAxis),
-                    autorange=True, ticks='', showgrid=False, zeroline=False
-                ),
-                yaxis=go.layout.YAxis(
-                    title=go.layout.yaxis.Title(text=yAxis),
-                    autorange=True, ticks='', zeroline=False, tickformat=None
-                )
-            )
-            figure = go.Figure(data=data, layout=layout)
-            chart = opy.plot(figure, auto_open=False, output_type='div')
 
+            for category in col.categorical:
+                trace = go.Scatter(marker=dict(symbol='circle'),
+                                   mode='lines+markers',
+                                   showlegend=True,
+                                   name=yAxis)
+                layout = getLayout(xAxis, yAxis, fileName)
+                figure = go.Figure(data=trace, layout=layout)
+
+                for name, group in df.groupby(category):
+                    trace.name = name
+                    trace.y = group[yAxis]
+                    trace.x = df[xAxis]
+                    figure.add_trace(trace)
+
+                chart = opy.plot(figure, auto_open=False, output_type='div')
+                chartsList.append(chart)
             return chart
 
         if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
@@ -108,17 +112,7 @@ class Chart:
                                 mode='markers',
                                 line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
             data = [trace1]
-            layout = go.Layout(
-                title=fileName,
-                xaxis=go.layout.XAxis(
-                    title=go.layout.xaxis.Title(text=xAxis),
-                    autorange=True, ticks='', showgrid=False, zeroline=False
-                ),
-                yaxis=go.layout.YAxis(
-                    title=go.layout.yaxis.Title(text=yAxis),
-                    autorange=True, ticks='', zeroline=False, tickformat=None
-                )
-            )
+            layout = getLayout(xAxis, yAxis, fileName)
             figure = go.Figure(data=data, layout=layout)
             chart = opy.plot(figure, auto_open=False, output_type='div')
 
@@ -138,3 +132,18 @@ def categorize_columns(line, header):
 
     # print("Categorical columns: ", columns.categorical, "\n Quantitative columns: ", columns.numerical, "\n Date columns: ", columns.date)
     return columns
+
+
+def getLayout(xAxis, yAxis, name):
+    layout = go.Layout(
+        title=name,
+        xaxis=go.layout.XAxis(
+            title=go.layout.xaxis.Title(text=xAxis),
+            autorange=True, ticks='', showgrid=False, zeroline=False
+        ),
+        yaxis=go.layout.YAxis(
+            title=go.layout.yaxis.Title(text=yAxis),
+            autorange=True, ticks='', zeroline=False, tickformat=None
+        )
+    )
+    return layout
