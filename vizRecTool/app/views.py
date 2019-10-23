@@ -50,16 +50,14 @@ class IndexView(TemplateView):
 
             csvFile = request.POST.get("fileBtn")
             resultChart = Chart.buildChart(csvFile, xAxis, yAxis)
-            print('TAMANHO', resultChart)
             context = locals()
             context = {
-                'chart': resultChart,
+                'charts': resultChart,
                 'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
                 'categoricalData': eval('[' + context['categorical'] + ']')[0],
                 'filePath': file,
             }
 
-            #print("context: ", context)
         except Exception as e:
             print("Exception", e)
             return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))

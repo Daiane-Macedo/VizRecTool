@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load django_altair %}
+{% comment %} {% load django_altair %} {% endcomment %}
 
 {% load static %}
 {% block script %}
@@ -14,8 +14,8 @@
 {% endblock %}
 
 {% block content %}
-<div id="page-wrapper">
-    <div class="container">
+<div id = "container">
+    <div class="container-menu">
          <div class="row mb-4 ">
             <div class="col-2 menuBox" id ="1" >
                 <p>Nome da <br> Ferramenta</p>
@@ -27,8 +27,8 @@
                     <label for="file">Escolher</label>
                  </form>
              </div>
-             <div class="col-5 menuBox">
-                 <div class = 'col-8 block'>
+             <div class="col-7 menuBox">
+                 <div class = 'block'>
                     <form id="fileform" action="{% url "app:chart" %}" method="POST" enctype="multipart/form-data">
                         <div id = "line1">Variável Y:
                             <input type="hidden" name="quantitativeData" value="{{ quantitativeData }}">
@@ -53,24 +53,24 @@
                     </form>
                  </div>
              </div>
-             <div class="col-2 menuBox">
+            {% comment %} <div class="col-2 menuBox">
                 <div class = 'block export'>Exportar:
                     <div class="downloadButton"> <button><img src="{% static '/img/arrow.png' %}"></button></div>
                 </div>
-             </div>
+             </div>{% endcomment %}
          </div>
     </div>
 
-    <div class="container2">
+    <div class="container-chart">
         {% for message in messages %}
             {% include "error.html" %}
         {% endfor %}
 
-       {% comment %} {% for c in chart %}{% endcomment %}
-            <div style="width:600;height:500">
-                {{ chart|safe }}
-            </div>
-{#        {% endfor %}#}
+            {% for c in charts %}
+                <div style="width:600;height:500">
+                    {{ c|safe }}
+                </div>
+            {% endfor %}
 
 
     </div>

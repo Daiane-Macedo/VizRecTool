@@ -28,19 +28,15 @@ class FileData:
 
         encode = utils.detect_encode(filePath)
         delimiter = utils.detect_delimiter(filePath, encode)
+
         df = pd.read_csv(filePath, nrows=50, index_col=False, encoding=encode['encoding'],
                          sep=delimiter)
         df = utils.clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
-        print(df.columns)
-        print(df.iloc[0:10, 0:10])
-
-        grouped_df = df.groupby(['ÓRGÃO SUPERIOR'])
-        print(grouped_df.first())
-
         header = df.columns.values
         line = df.iloc[1].values
         columns = categorize_columns(line, header)
+
         quantitativeColumns = columns.quantitative
         categoricalColumns = columns.categorical
         categoricalColumns.extend(columns.date)
@@ -83,8 +79,9 @@ class Chart:
             layout = getLayout(xAxis, yAxis, fileName)
             figure = go.Figure(data=data, layout=layout)
             chart = opy.plot(figure, auto_open=False, output_type='div')
+            chartsList.append(chart)
 
-            return chart
+            return chartsList
 
         if xAxis in col.date and yAxis in col.quantitative:  # line
 
@@ -104,7 +101,10 @@ class Chart:
 
                 chart = opy.plot(figure, auto_open=False, output_type='div')
                 chartsList.append(chart)
-            return chart
+                # truncate list in 5 charts (max)
+                chartsList = chartsList[0: 5]
+
+            return chartsList
 
         if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
             trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
@@ -115,8 +115,9 @@ class Chart:
             layout = getLayout(xAxis, yAxis, fileName)
             figure = go.Figure(data=data, layout=layout)
             chart = opy.plot(figure, auto_open=False, output_type='div')
+            chartsList.append(chart)
 
-        return chart
+            return chartsList
 
 
 def categorize_columns(line, header):

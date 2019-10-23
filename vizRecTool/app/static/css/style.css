@@ -1,43 +1,39 @@
-html {
-   margin: 0px;
-   height: 100%;
+html,
+body{
+   margin: 0;
    width: 100%;
+   height: 100vh;
+}
+
+#page-wrapper,
+#container{
+    width: 100%;
+    margin: 0;
+    height: 100%;
 }
 body{
     /*background-color: #f4f4f4 !important;*/
     background-color: #e8e8e8 !important;
     color: #6b6b6b !important;
-    height: 100%;
-    width: 100%;
-}
-.vega-embed{
-    height: 70% !important;
-}
-canvas.marks {
-    max-width: 100%!important;
-    height: auto!important;
-}
-#page-wrapper{
-    height: 100%;
-    width: 100%;
-}
-.container{
-    min-width: 94%;
 }
 
 .col-8{
    min-width: 100% !important;
 }
-.container2{
+.container-chart,
+.container-menu{
+    padding-right: 15px;
+    padding-left: 15px;
+    margin: 0 auto;
+    width: 94%;
+}
+.container-chart{
     text-align: center;
     width: 94%;
     height: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
-    padding-top: 2%;
-    margin-bottom: 20px;
-    margin: 0 auto;
     background: #FFFFFF;
+    padding-top: 1%;
+
 }
 .inputfile {
 	width: 0.1px;
@@ -103,6 +99,7 @@ canvas.marks {
     min-height: 127px;
 }
 #line1, #line2{
+    margin: 0;
     width: 68%;
 }
 #line1{
