@@ -55,7 +55,6 @@ class Chart:
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
-
         encode = utils.detect_encode(filePath)
         delimiter = utils.detect_delimiter(filePath, encode)
 
@@ -66,6 +65,11 @@ class Chart:
         line = df.iloc[1].values
         col = categorize_columns(line, header)
         df = utils.parse_columns(df, col)
+
+        uniqueVal = df[xAxis].unique()
+        if xAxis in col.categorical and yAxis in col.quantitative and len(uniqueVal) < 3: #pie
+            chartsList = [build_pie_chart(df, xAxis, yAxis, fileName)]
+            return chartsList
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
             chartsList = build_bar_chart(df, xAxis, yAxis, fileName)
@@ -97,7 +101,6 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
     figure = go.Figure(data=trace, layout=layout)
 
     for name, group in df.groupby(category):
-        print(category)
         trace.name = name
         trace.y = group[yAxis]
         trace.x = df[xAxis]
@@ -122,6 +125,18 @@ def build_bar_chart(df, xAxis, yAxis, chartName):
     # truncate list in 5 charts (max)
     chartsList = chartsList[0: 5]
     return chartsList
+
+
+def build_pie_chart(df, labels, values, fileName):
+    data = [go.Pie(
+        labels=df[labels],
+        values=df[values],
+        showlegend=True, name=labels
+    )]
+    figure = go.Figure(data)
+    chart = Chart()
+    chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    return chart
 
 
 def build_scatter_plot(df, xAxis, yAxis, chartName):
