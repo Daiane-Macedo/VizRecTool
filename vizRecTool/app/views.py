@@ -49,7 +49,8 @@ class IndexView(TemplateView):
                 raise Exception('Variável X ou Y não recebida')
 
             csvFile = request.POST.get("fileBtn")
-            resultChart = Chart.buildChart(csvFile, xAxis, yAxis)
+            resultChart = Chart.build_chart(csvFile, xAxis, yAxis)
+            print(len(resultChart))
             context = locals()
             context = {
                 'charts': resultChart,

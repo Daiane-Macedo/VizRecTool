@@ -47,14 +47,12 @@ class FileData:
 
 
 class Chart:
-    pie = 1
-    bar = 2
-    columns = 2
-    line = 3
+    def __init__(self):
+        self.figure = None
+        self.content = None
 
-    def buildChart(csvFile, xAxis, yAxis):
-        chart = None
-        chartsList = []
+    def build_chart(csvFile, xAxis, yAxis):
+        # chartsList = []
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
@@ -71,53 +69,76 @@ class Chart:
         df = utils.parse_columns(df, col)
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
-            data = [go.Bar(
-                x=df[xAxis],
-                y=df[yAxis],
-                showlegend=True, name=yAxis
-            )]
-            layout = getLayout(xAxis, yAxis, fileName)
-            figure = go.Figure(data=data, layout=layout)
-            chart = opy.plot(figure, auto_open=False, output_type='div')
-            chartsList.append(chart)
-
+            chartsList = build_bar_chart(df, xAxis, yAxis, fileName)
             return chartsList
 
         if xAxis in col.date and yAxis in col.quantitative:  # line
-
+            chartsList = []
             for category in col.categorical:
-                trace = go.Scatter(marker=dict(symbol='circle'),
-                                   mode='lines+markers',
-                                   showlegend=True,
-                                   name=yAxis)
-                layout = getLayout(xAxis, yAxis, fileName)
-                figure = go.Figure(data=trace, layout=layout)
-
-                for name, group in df.groupby(category):
-                    trace.name = name
-                    trace.y = group[yAxis]
-                    trace.x = df[xAxis]
-                    figure.add_trace(trace)
-
-                chart = opy.plot(figure, auto_open=False, output_type='div')
+                chart = build_line_chart(df, category, xAxis, yAxis, fileName)
                 chartsList.append(chart)
-                # truncate list in 5 charts (max)
-                chartsList = chartsList[0: 5]
 
+            # truncate list in 5 charts (max)
+            chartsList = chartsList[0: 5]
             return chartsList
 
         if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
-            trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
-                                marker=dict(symbol='circle'),
-                                mode='markers',
-                                line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
-            data = [trace1]
-            layout = getLayout(xAxis, yAxis, fileName)
-            figure = go.Figure(data=data, layout=layout)
-            chart = opy.plot(figure, auto_open=False, output_type='div')
-            chartsList.append(chart)
-
+            chartsList = build_scatter_plot(df, xAxis, yAxis, fileName)
             return chartsList
+
+
+def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
+    df = dataframe.copy()
+    chartsList = []
+    trace = go.Scatter(marker=dict(symbol='circle'),
+                       mode='lines+markers',
+                       showlegend=True,
+                       name=yAxis)
+    layout = getLayout(xAxis, yAxis, chartName)
+    figure = go.Figure(data=trace, layout=layout)
+
+    for name, group in df.groupby(category):
+        print(category)
+        trace.name = name
+        trace.y = group[yAxis]
+        trace.x = df[xAxis]
+        figure.add_trace(trace)
+    chart = Chart()
+    chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    return chart
+
+
+def build_bar_chart(df, xAxis, yAxis, chartName):
+    chartsList = []
+    data = [go.Bar(
+        x=df[xAxis],
+        y=df[yAxis],
+        showlegend=True, name=yAxis
+    )]
+    layout = getLayout(xAxis, yAxis, chartName)
+    figure = go.Figure(data=data, layout=layout)
+    chart = Chart()
+    chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    chartsList.append(chart)
+    # truncate list in 5 charts (max)
+    chartsList = chartsList[0: 5]
+    return chartsList
+
+
+def build_scatter_plot(df, xAxis, yAxis, chartName):
+    chartsList = []
+    trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
+                        marker=dict(symbol='circle'),
+                        mode='markers',
+                        line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
+    data = [trace1]
+    layout = getLayout(xAxis, yAxis, chartName)
+    figure = go.Figure(data=data, layout=layout)
+    chart = Chart()
+    chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    chartsList.append(chart)
+
+    return chartsList
 
 
 def categorize_columns(line, header):

@@ -30,10 +30,8 @@ body{
 .container-chart{
     text-align: center;
     width: 94%;
-    height: 100%;
     background: #FFFFFF;
-    padding-top: 1%;
-
+    min-height: 100%;
 }
 .inputfile {
 	width: 0.1px;
