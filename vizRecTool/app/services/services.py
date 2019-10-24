@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import altair as alt
 import sys
 import plotly.offline as opy
 import plotly.graph_objs as go

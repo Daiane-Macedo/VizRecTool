@@ -33,7 +33,7 @@ def parse_columns(df, col):
 
     for quant in col.quantitative:
         if (df[quant].str.contains(",", regex=False)).any():
-            df[quant] = df[quant].apply(lambda x: float(x.replace(".", "").replace(",", ".")))
+            df[quant] = df[quant].apply(lambda x: (x.replace(".", "").replace(",", ".")))
     return df
 
 
