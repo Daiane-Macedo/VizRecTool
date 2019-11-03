@@ -1,10 +1,8 @@
 import os
+import shutil
 import pandas as pd
-import sys
 import plotly.offline as opy
 import plotly.graph_objs as go
-
-sys.path.append(".")
 import sys
 
 sys.path.append("..")
@@ -21,6 +19,8 @@ class FileData:
 
         if not (fileName.lower().endswith('.csv')):
             raise Exception('Tipo de arquivo inválido. Insira um ".csv"')
+        # clean old files
+        shutil.rmtree(FileData.FILE_FOLDER)
 
         if not (os.path.isfile(filePath)):
             utils.upload(csvFile)
@@ -67,8 +67,10 @@ class Chart:
         df = utils.parse_columns(df, col)
 
         uniqueVal = df[xAxis].unique()
-        if xAxis in col.categorical and yAxis in col.quantitative and len(uniqueVal) < 3: #pie
+        if xAxis in col.categorical and yAxis in col.quantitative and len(uniqueVal) < 3:  # pie
             chartsList = [build_pie_chart(df, xAxis, yAxis, fileName)]
+
+            # def generate_tumbnail_images
             return chartsList
 
         if xAxis in col.categorical and yAxis in col.quantitative:  # bar
@@ -76,6 +78,7 @@ class Chart:
             return chartsList
 
         if xAxis in col.date and yAxis in col.quantitative:  # line
+
             chartsList = []
             for category in col.categorical:
                 chart = build_line_chart(df, category, xAxis, yAxis, fileName)
@@ -91,7 +94,6 @@ class Chart:
 
 
 def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
-    df = dataframe.copy()
     chartsList = []
     trace = go.Scatter(marker=dict(symbol='circle'),
                        mode='lines+markers',
@@ -99,6 +101,8 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
                        name=yAxis)
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=trace, layout=layout)
+    df = dataframe[[category, yAxis, xAxis]]
+    print(df)
 
     for name, group in df.groupby(category):
         trace.name = name
@@ -107,6 +111,8 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
         figure.add_trace(trace)
     chart = Chart()
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    chartsList.append(chart)
+
     return chart
 
 

@@ -6,3 +6,5 @@ vega_datasets
 altair
 pandas
 plotly
+psutil
+requests
