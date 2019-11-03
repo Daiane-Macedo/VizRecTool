@@ -78,12 +78,10 @@ class Chart:
             return chartsList
 
         if xAxis in col.date and yAxis in col.quantitative:  # line
-
             chartsList = []
             for category in col.categorical:
                 chart = build_line_chart(df, category, xAxis, yAxis, fileName)
                 chartsList.append(chart)
-
             # truncate list in 5 charts (max)
             chartsList = chartsList[0: 5]
             return chartsList
@@ -94,24 +92,33 @@ class Chart:
 
 
 def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
-    chartsList = []
+    # format chart layout
     trace = go.Scatter(marker=dict(symbol='circle'),
                        mode='lines+markers',
                        showlegend=True,
                        name=yAxis)
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=trace, layout=layout)
-    df = dataframe[[category, yAxis, xAxis]]
-    print(df)
 
-    for name, group in df.groupby(category):
+    # group by and sum numeric values
+    dataframe = dataframe[[category, yAxis, xAxis]]
+    dataframe[yAxis] = pd.to_numeric(dataframe[yAxis], errors='coerce')
+    df = dataframe.groupby([xAxis, category], as_index=False)[yAxis].sum()
+
+    # add traces to chart
+    unique = df[category].unique()
+    for name in unique:
+        df2 = None
+        df2 = dict(tuple(df.groupby(category)))
+        df2 = df2[name]
+        print('#######DFS####', df2)
+
         trace.name = name
-        trace.y = group[yAxis]
-        trace.x = df[xAxis]
+        trace.y = df2[yAxis]
+        trace.x = df2[xAxis]
         figure.add_trace(trace)
     chart = Chart()
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
-    chartsList.append(chart)
 
     return chart
 
