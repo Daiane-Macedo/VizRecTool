@@ -24,7 +24,10 @@
                  <div class = 'block'>Dataset:</div>
                  <form action="{% url "app:file" %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
                     <input type="file" name="csvfile" id="file" accept="text/csv" class="inputfile" onchange="this.form.submit()"/>
-                    <label for="file">Escolher</label>
+                     <label for="file">Escolher</label>
+                     {% if filePath %}
+                         <label class="fileNameLabel" type="text"> <p>{{ filePath }}</p> </label>
+                     {% endif %}
                  </form>
              </div>
              <div class="col-7 menuBox">

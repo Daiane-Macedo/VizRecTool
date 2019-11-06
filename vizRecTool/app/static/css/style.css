@@ -1,8 +1,9 @@
 html,
 body{
-   margin: 0;
-   width: 100%;
-   height: 100vh;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
 }
 
 #page-wrapper,
@@ -15,7 +16,9 @@ body{
     background-color: #e8e8e8 !important;
     color: #6b6b6b !important;
 }
-
+label{
+    margin: 0;
+}
 .col-8{
    min-width: 100% !important;
 }
@@ -91,11 +94,12 @@ body{
 
 .menuBox p{
     display: block;
-    margin-block-start: 1.4em !important;
+    margin-block-start: 1.3em !important;
 }
-
+row{
+    min-height: 130px;
+}
 .row mb-4{
-    min-height: 127px;
     box-shadow: -2px 1px 5px rgba(0, 0, 0, 0.1);
 }
 #centerColumn{
@@ -107,32 +111,12 @@ body{
     width: 68%;
 }
 #line1{
-    padding-bottom: 5px;
+    padding-bottom: 0.4em;
     border-bottom:1px solid rgba(0, 0, 0, 0.12);
  }
 #line2{
-    padding-top: 5px;
+    padding-top: 0.4em;
 }
-
- .datasetOptions{
-    background: #FFFFFF;
-    border: 0.5px solid #e2e2e2;
-    border-radius: 2px;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    padding: 7px;
-    line-height: 9PX;
-    letter-spacing: 0.0357143em;
- }
-.datasetOptions .option{
-    background: #FFFFFF;
-    border: 0.5px solid #e2e2e2;
-    border-radius: 2px;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
- }
 
 .bootstrap-select .btn:focus{outline:none!important;}
 
@@ -143,25 +127,28 @@ body{
 .block{
     display: block;
     width: 70%;
-    margin-block-start: 1.4em !important;
+    margin-block-start: 1.3em !important;
 }
 .selectOptions{
     width: 70%;
-    transition: box-shadow .3s;
-    font-size: 1em;
-    font-weight: 200;
+    transition: opacity 0.4s ease-in-out 0s;
+    -webkit-transition: width 3s; /*For Safari 3.1 to 6.0 */
+
     position: relative;
     padding: 4px 8px 4px 8px !important;
     overflow: hidden;
     outline: none;
-    border-radius: 2px;
     background-color: #ffff;
     color: #6b6b6b;
-    border: 1px solid #bdbaba;
+    border: 1px solid rgba(0, 0, 0, 0.18);
     text-transform: uppercase;
+    border-radius: 0;
+    text-overflow: ellipsis;
+    font-size: 1em;
+    font-weight: 200;
 }
 .selectOptions:hover{
-     box-shadow: 0 0 5px rgba(33,33,33,.2);
+    opacity: 0.85;
 }
 .generateBtn{
     background: #FFFFFF;
@@ -172,6 +159,23 @@ body{
 .export{
     text-align: center;
     display: none;
+}
+.fileNameLabel{
+    margin: 0;
+    height: 1.2em;
+    width: 100%;
+    /*display: contents;*/
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.12);
+}
+.fileNameLabel p{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0 !important;
+    line-height: 1.1;
 }
 
 input, button, submit {
