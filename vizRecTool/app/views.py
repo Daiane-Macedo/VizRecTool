@@ -29,7 +29,7 @@ class IndexView(TemplateView):
                 }
             except Exception as e:
                 print(e)
-                return render(request, IndexView.template_name, messages.error(request, "Erro ao carregar arquivo"))
+                return render(request, IndexView.template_name, messages.error(request, e))
 
             return render(request, IndexView.template_name, context)
 
@@ -37,6 +37,7 @@ class IndexView(TemplateView):
         form = forms.fileForm(request.POST or None)
         quantitative = request.POST.getlist('quantitativeData')[0]
         categorical = request.POST.getlist('categoricalData')[0]
+        resultChart = None
 
         if form.is_valid():
             xAxis = form.cleaned_data['selectedX']
@@ -46,11 +47,10 @@ class IndexView(TemplateView):
             file = request.POST.get('fileBtn', False)
             if not (xAxis and yAxis and file):
                 print("X:", xAxis, "Y:", yAxis, "File:", file)
-                raise Exception('Variável X ou Y não recebida')
+                return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))
 
             csvFile = request.POST.get("fileBtn")
             resultChart = Chart.build_chart(csvFile, xAxis, yAxis)
-            print(len(resultChart))
             context = locals()
             context = {
                 'charts': resultChart,
@@ -60,8 +60,13 @@ class IndexView(TemplateView):
             }
 
         except Exception as e:
-            print("Exception", e)
-            return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))
+            print("Exception: ", e)
+            context = {
+                'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
+                'categoricalData': eval('[' + context['categorical'] + ']')[0],
+                'filePath': file,
+            }
+            return render(request, IndexView.template_name, context, messages.error(request, "Erro ao gerar gráfico"))
 
         return render(request, IndexView.template_name, context)
 
