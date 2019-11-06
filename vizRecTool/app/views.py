@@ -57,6 +57,8 @@ class IndexView(TemplateView):
                 'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
                 'categoricalData': eval('[' + context['categorical'] + ']')[0],
                 'filePath': file,
+                'selectedValueX': xAxis,
+                'selectedValueY': yAxis
             }
 
         except Exception as e:
@@ -65,6 +67,8 @@ class IndexView(TemplateView):
                 'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
                 'categoricalData': eval('[' + context['categorical'] + ']')[0],
                 'filePath': file,
+                'selectedValueX': xAxis,
+                'selectedValueY': yAxis
             }
             return render(request, IndexView.template_name, context, messages.error(request, "Erro ao gerar gráfico"))
 

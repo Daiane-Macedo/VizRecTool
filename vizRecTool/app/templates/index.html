@@ -37,7 +37,9 @@
                             <input type="hidden" name="quantitativeData" value="{{ quantitativeData }}">
                             <select class="selectOptions" name="selectedY">
                                 {% for q in quantitativeData %}
-                                    <option>{{ q }}</option>
+                                    <option  {% if q == selectedValueY %} selected {% endif %}>
+                                        {{ q }}
+                                    </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -45,13 +47,15 @@
                             <input type="hidden" name="categoricalData" value="{{ categoricalData }}">
                             <select class="selectOptions" name="selectedX">
                                 {% for c in categoricalData %}
-                                    <option>{{ c }}</option>
+                                     <option  {% if c == selectedValueX %} selected {% endif %}>
+                                        {{ c }}
+                                     </option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class = "generateBtn">
                             {% csrf_token %}
-                            <button type="text" name="fileBtn" value="{{ filePath }}"class="chartButton"> Gerar Gráfico</button>
+                            <button type="text" name="fileBtn" value="{{ filePath }}" class="chartButton"> Gerar Gráfico</button>
                         </div>
                     </form>
                  </div>
