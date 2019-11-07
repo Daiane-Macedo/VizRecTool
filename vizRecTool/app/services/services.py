@@ -182,7 +182,7 @@ def build_scatter_plot(df, xAxis, yAxis, chartName):
     trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
                         marker=dict(symbol='circle'),
                         mode='markers',
-                        line=dict(color='rgb(255,0,0)'), showlegend=True, name=yAxis)
+                        line=dict(color='rgb(255,0,0)'), showlegend=False)
     data = [trace1]
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=data, layout=layout)
@@ -208,6 +208,7 @@ def categorize_columns(line, header):
 
 
 def getLayout(xAxis, yAxis, name):
+    print(xAxis, yAxis)
     layout = go.Layout(
         title=name,
         xaxis=go.layout.XAxis(
