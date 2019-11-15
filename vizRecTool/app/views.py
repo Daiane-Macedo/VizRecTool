@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse
 from django.contrib import messages
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.shortcuts import render, render_to_response
-from services.services import FileData
-from services.services import Chart
-from vega_datasets import data
-import altair as alt
-import pandas as pd
-import forms
 
+import forms
+from services.services import Chart
+from services.services import FileData
 
 
 class IndexView(TemplateView):
@@ -52,14 +48,19 @@ class IndexView(TemplateView):
             csvFile = request.POST.get("fileBtn")
             resultChart = Chart.build_chart(csvFile, xAxis, yAxis)
             context = locals()
+            myform = form.full_clean()
+            print(form.full_clean())
+
             context = {
                 'charts': resultChart,
                 'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
                 'categoricalData': eval('[' + context['categorical'] + ']')[0],
                 'filePath': file,
                 'selectedValueX': xAxis,
-                'selectedValueY': yAxis
+                'selectedValueY': yAxis,
+                'fileForm': myform
             }
+            print(context)
 
         except Exception as e:
             print("Exception: ", e)

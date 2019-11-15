@@ -1,9 +1,10 @@
 import os
 import shutil
-import pandas as pd
-import plotly.offline as opy
-import plotly.graph_objs as go
 import sys
+
+import pandas as pd
+import plotly.graph_objs as go
+import plotly.offline as opy
 
 sys.path.append("..")
 import utils
@@ -130,10 +131,13 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
             figure.add_trace(trace)
     else:
         dataframe = dataframe[[yAxis, xAxis]]
-        df = dataframe.groupby([xAxis], as_index=False)[yAxis].sum()
+        dataframe[xAxis] = dataframe[xAxis].astype('datetime64')
+        dataframe['mes_ano'] = dataframe[xAxis].map(lambda x: 100 * x.year + "-" + x.month)
+        print(dataframe)
+        df = dataframe.groupby(['mes_ano'], as_index=False)[yAxis].sum()
         trace.name = yAxis
         trace.y = df[yAxis]
-        trace.x = df[xAxis]
+        trace.x = df['mes_ano']
         figure.add_trace(trace)
 
     chart = Chart()

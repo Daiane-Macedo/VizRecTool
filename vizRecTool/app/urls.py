@@ -1,8 +1,5 @@
-import app
-from django.contrib import admin
 from django.urls import path
 
-import views
 from app.views import IndexView
 
 app_name = "app"

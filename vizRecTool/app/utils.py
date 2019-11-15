@@ -1,10 +1,10 @@
-from django.core.files.storage import FileSystemStorage
-from dateutil.parser import parse
-from django import forms
-
 import re
+
 import chardet
 import pandas as pd
+from dateutil.parser import parse
+from django import forms
+from django.core.files.storage import FileSystemStorage
 
 
 class Type(object):
