@@ -109,9 +109,8 @@ def isWord(field):
     return True
 
 
-def upload(file):
-    folder = 'files/'
-    fs = FileSystemStorage(location=folder)  # defaults to   MEDIA_ROOT
+def upload(path, file):
+    fs = FileSystemStorage(location=path)
     filename = fs.save(file.name, file)
     file_url = fs.url(filename)
     return file_url

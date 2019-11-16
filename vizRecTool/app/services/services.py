@@ -11,7 +11,8 @@ import utils
 
 
 class FileData:
-    FILE_FOLDER = 'files/'
+
+    FILE_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), "files/")
 
     def loadData(csvFile):
 
@@ -20,11 +21,10 @@ class FileData:
 
         if not (fileName.lower().endswith('.csv')):
             raise Exception('Tipo de arquivo inválido. Insira um ".csv"')
-        # clean old files
-        shutil.rmtree(FileData.FILE_FOLDER)
 
-        if not (os.path.isfile(filePath)):
-            utils.upload(csvFile)
+        # cleaning old files and uploading received file
+        shutil.rmtree(FileData.FILE_FOLDER)
+        utils.upload(FileData.FILE_FOLDER, csvFile)
 
         encode = utils.detect_encode(filePath)
         delimiter = utils.detect_delimiter(filePath, encode)
