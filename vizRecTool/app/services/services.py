@@ -120,7 +120,8 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
     # group by and sum numeric values
     if category:
         dataframe = dataframe[[category, yAxis, xAxis]]
-        df = dataframe.groupby([xAxis, category], as_index=False)[yAxis].sum()
+        df = utils.data_binning(dataframe, xAxis, yAxis, category)
+        #df = dataframe.groupby([xAxis, category], as_index=False)[yAxis].sum()
 
         # add traces to chart
         unique = df[category].unique()
@@ -133,13 +134,9 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
             figure.add_trace(trace)
     else:
         dataframe = dataframe[[yAxis, xAxis]]
-        # dataframe[xAxis] = dataframe[xAxis].astype('datetime64')
-        #dataframe['mes_ano'] = dataframe[xAxis].map(lambda x: str(x.year) + "-" + str(x.month))
-        #df = dataframe.groupby(['mes_ano'], as_index=False)[yAxis].sum()
-        df = utils.data_binning(dataframe, xAxis, yAxis)
+        df = utils.data_binning(dataframe, xAxis, yAxis, None)
         trace.name = yAxis
         trace.y = df[yAxis]
-        print(df)
         trace.x = df[xAxis]
         figure.add_trace(trace)
 
@@ -210,12 +207,10 @@ def categorize_columns(line, header):
         else:
             columns.quantitative.append(header[i].upper())
 
-    # print("Categorical columns: ", columns.categorical, "\n Quantitative columns: ", columns.numerical, "\n Date columns: ", columns.date)
     return columns
 
 
 def getLayout(xAxis, yAxis, name):
-    print(xAxis, yAxis)
     layout = go.Layout(
         title=name,
         xaxis=go.layout.XAxis(

@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 
 import chardet
@@ -27,44 +28,89 @@ class fileForm(forms.Form):
     selectColumn: forms.CharField()
 
 
-def data_binning(df, xAxis, yAxis):
-    months = df[xAxis].dt.month.unique()
+def data_binning(df, xAxis, yAxis, category):
+    hasMonth = True
+    months = []
+    # Verifying if date has month
+    try:
+        months = df[xAxis].dt.month.unique()
+    except Exception:
+        hasMonth = False
+
     minTime = min(df[xAxis])
     maxTime = max(df[xAxis])
     minYear = minTime.year
     maxYear = maxTime.year
-    minMonth = min(months)
-    maxMonth = max(months)
+
+    if hasMonth:
+        minMonth = min(months)
+        maxMonth = max(months)
     yearsQty = maxYear - minYear + 1
 
-    if minYear != maxYear and yearsQty > 5:
+    # if has only year field or more than 5 distinct years: interval = year
+    if not hasMonth or minYear != maxYear and yearsQty > 5:
         print("Binning by YEAR...")
         df[xAxis] = df[xAxis].map(lambda x: str(x.year))
-        df = df.groupby([xAxis], as_index=False)[yAxis].sum()
-        return df
 
     else:
-        print(minMonth, maxMonth)
+        # if has more than one month in date column: interval = month
         if minMonth != maxMonth:
             print('Binning by MONTH...')
-            df[xAxis] = df[xAxis].map(lambda x: str(x.year) + "-" + str(x.month))
-            df = df.groupby([xAxis], as_index=False)[yAxis].sum()
-            return df
+            df[xAxis] = df[xAxis].map(
+                lambda x: str(x.year) + "-" +
+                          (str(x.month) if len(str(x.month)) == 2 else '0' + str(
+                              x.month)))  # add 0 to month number if is 1, 2, 3...9
+            print('Grouped by month', df)
         else:
-            print('Binning by DAY...')
-            df = df.groupby([xAxis], as_index=False)[yAxis].sum()
-            return df
+            print('Grouped by day', df)
+
+    # sum by quantitative column
+    if category:
+        df = df.groupby([xAxis, category], as_index=False)[yAxis].sum()
+    else:
+        df = df.groupby([xAxis], as_index=False)[yAxis].sum()
+    return df
 
 
 def parse_columns(df, col):
-    # print(df)
     for date in col.date:
-        df[date] = pd.to_datetime(df[date])
-        print(df)
+        df[date] = parse_date(df[date])
+        df = df.sort_values(by=date)
+
     for quant in col.quantitative:
         if (df[quant].str.contains(",", regex=False)).any():
             df[quant] = df[quant].apply(lambda x: (x.replace(".", "").replace(",", ".")))
     return df
+
+
+def parse_date(dfColumn):
+    dates = dfColumn.unique()
+    dt = next((el for el in dates if el is not None), None)  # get first non-null item in date's list
+    dayFirst = True
+
+    # verifying date is in YYYY/MM/DD format
+    format_list = ['%Y-%m-%d', '%Y-%b-%d']
+    for date_format in format_list:
+        try:
+            datetime.strptime(dt, date_format)
+            dayFirst = False
+            break
+        except ValueError:
+            continue
+
+    parsedDf = lookup(dfColumn, dayFirst)
+    return parsedDf
+
+
+def lookup(s, dFormat):
+    """
+    This is an extremely fast approach to datetime parsing.
+    For large data, the same dates are often repeated. Rather than
+    re-parse these, we store all unique dates, parse them, and
+    use a lookup to convert all dates.
+    """
+    dates = {date: pd.to_datetime(date, dayfirst=dFormat) for date in s.unique()}
+    return s.map(dates)
 
 
 def clean_dataFrame(df):
@@ -100,7 +146,6 @@ def format_line(line):
     delimiter = detect_delimiter(line)
     formattedLine = line.replace('"', '').replace("'", "").split(delimiter)
     # formattedLine = formattedLine[0:]
-    print("retorno", formattedLine)
 
     return formattedLine
 
