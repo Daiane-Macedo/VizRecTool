@@ -132,7 +132,7 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
     else:
         dataframe = dataframe[[yAxis, xAxis]]
         dataframe[xAxis] = dataframe[xAxis].astype('datetime64')
-        dataframe['mes_ano'] = dataframe[xAxis].map(lambda x: 100 * x.year + "-" + x.month)
+        dataframe['mes_ano'] = dataframe[xAxis].map(lambda x: str(x.year) + "-" + str(x.month))
         print(dataframe)
         df = dataframe.groupby(['mes_ano'], as_index=False)[yAxis].sum()
         trace.name = yAxis
