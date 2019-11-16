@@ -78,8 +78,12 @@ def parse_columns(df, col):
         df = df.sort_values(by=date)
 
     for quant in col.quantitative:
+        # replace delimiter
         if (df[quant].str.contains(",", regex=False)).any():
             df[quant] = df[quant].apply(lambda x: (x.replace(".", "").replace(",", ".")))
+        # convert to numeric
+        df[quant] = pd.to_numeric(df[quant], errors='coerce')
+
     return df
 
 
@@ -88,7 +92,7 @@ def parse_date(dfColumn):
     dt = next((el for el in dates if el is not None), None)  # get first non-null item in date's list
     dayFirst = True
 
-    # verifying date is in YYYY/MM/DD format
+    # verifying if date is in YYYY/MM/DD format
     format_list = ['%Y-%m-%d', '%Y-%b-%d']
     for date_format in format_list:
         try:
@@ -125,7 +129,7 @@ def clean_dataFrame(df):
 
 def detect_encode(csvFile):
     with open(csvFile, 'rb') as f:
-        encode = chardet.detect(f.read())  # or readline if the file is large
+        encode = chardet.detect(f.readline())
         return encode
 
 

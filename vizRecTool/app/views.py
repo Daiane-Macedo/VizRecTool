@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 import forms
 from services.services import Chart
 from services.services import FileData
+import logging
 
 
 class IndexView(TemplateView):
@@ -34,7 +35,7 @@ class IndexView(TemplateView):
         quantitative = request.POST.getlist('quantitativeData')[0]
         categorical = request.POST.getlist('categoricalData')[0]
         resultChart = None
-
+        context = locals()
         if form.is_valid():
             xAxis = form.cleaned_data['selectedX']
             yAxis = form.cleaned_data['selectedY']
@@ -42,14 +43,12 @@ class IndexView(TemplateView):
         try:
             file = request.POST.get('fileBtn', False)
             if not (xAxis and yAxis and file):
-                print("X:", xAxis, "Y:", yAxis, "File:", file)
+                # print("X:", xAxis, "Y:", yAxis, "File:", file)
                 return render(request, IndexView.template_name, messages.error(request, "Erro ao gerar gráfico"))
 
             csvFile = request.POST.get("fileBtn")
             resultChart = Chart.build_chart(csvFile, xAxis, yAxis)
-            context = locals()
             myform = form.full_clean()
-            print(form.full_clean())
 
             context = {
                 'charts': resultChart,
@@ -60,10 +59,9 @@ class IndexView(TemplateView):
                 'selectedValueY': yAxis,
                 'fileForm': myform
             }
-            print(context)
 
-        except Exception as e:
-            print("Exception: ", e)
+        except Exception as ex:
+            logging.exception(ex)
             context = {
                 'quantitativeData': eval('[' + context['quantitative'] + ']')[0],
                 'categoricalData': eval('[' + context['categorical'] + ']')[0],

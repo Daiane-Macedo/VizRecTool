@@ -29,7 +29,7 @@ class FileData:
         encode = utils.detect_encode(filePath)
         delimiter = utils.detect_delimiter(filePath, encode)
 
-        df = pd.read_csv(filePath, nrows=50, index_col=False, encoding=encode['encoding'],
+        df = pd.read_csv(filePath, index_col=False, encoding=encode['encoding'],
                          sep=delimiter)
         df = utils.clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
@@ -115,7 +115,7 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
                        name=yAxis)
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=trace, layout=layout)
-    dataframe[yAxis] = pd.to_numeric(dataframe[yAxis], errors='coerce')  # convert to numeric
+
 
     # group by and sum numeric values
     if category:
@@ -149,7 +149,6 @@ def build_bar_chart(dataframe, xAxis, yAxis, chartName):
     trace = go.Bar(showlegend=True)
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=trace, layout=layout)
-    dataframe[yAxis] = pd.to_numeric(dataframe[yAxis], errors='coerce')  # convert to numeric
     df = dataframe[[yAxis, xAxis]]
 
     # add traces to chart
