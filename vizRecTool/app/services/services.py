@@ -61,6 +61,7 @@ class Chart:
 
         df = pd.read_csv(filePath, index_col=False, encoding=encode['encoding'], nrows=4999, sep=delimiter)
         df = utils.clean_dataFrame(df)
+
         df.columns = map(str.upper, df.columns)
         header = df.columns.values
         line = df.iloc[1].values
@@ -106,6 +107,7 @@ class Chart:
 
 
 def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
+
     # format chart layout
     trace = go.Scatter(marker=dict(symbol='circle'),
                        mode='lines+markers',
@@ -131,13 +133,14 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
             figure.add_trace(trace)
     else:
         dataframe = dataframe[[yAxis, xAxis]]
-        dataframe[xAxis] = dataframe[xAxis].astype('datetime64')
-        dataframe['mes_ano'] = dataframe[xAxis].map(lambda x: str(x.year) + "-" + str(x.month))
-        print(dataframe)
-        df = dataframe.groupby(['mes_ano'], as_index=False)[yAxis].sum()
+        # dataframe[xAxis] = dataframe[xAxis].astype('datetime64')
+        #dataframe['mes_ano'] = dataframe[xAxis].map(lambda x: str(x.year) + "-" + str(x.month))
+        #df = dataframe.groupby(['mes_ano'], as_index=False)[yAxis].sum()
+        df = utils.data_binning(dataframe, xAxis, yAxis)
         trace.name = yAxis
         trace.y = df[yAxis]
-        trace.x = df['mes_ano']
+        print(df)
+        trace.x = df[xAxis]
         figure.add_trace(trace)
 
     chart = Chart()

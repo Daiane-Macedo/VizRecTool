@@ -27,10 +27,40 @@ class fileForm(forms.Form):
     selectColumn: forms.CharField()
 
 
+def data_binning(df, xAxis, yAxis):
+    months = df[xAxis].dt.month.unique()
+    minTime = min(df[xAxis])
+    maxTime = max(df[xAxis])
+    minYear = minTime.year
+    maxYear = maxTime.year
+    minMonth = min(months)
+    maxMonth = max(months)
+    yearsQty = maxYear - minYear + 1
+
+    if minYear != maxYear and yearsQty > 5:
+        print("Binning by YEAR...")
+        df[xAxis] = df[xAxis].map(lambda x: str(x.year))
+        df = df.groupby([xAxis], as_index=False)[yAxis].sum()
+        return df
+
+    else:
+        print(minMonth, maxMonth)
+        if minMonth != maxMonth:
+            print('Binning by MONTH...')
+            df[xAxis] = df[xAxis].map(lambda x: str(x.year) + "-" + str(x.month))
+            df = df.groupby([xAxis], as_index=False)[yAxis].sum()
+            return df
+        else:
+            print('Binning by DAY...')
+            df = df.groupby([xAxis], as_index=False)[yAxis].sum()
+            return df
+
+
 def parse_columns(df, col):
+    # print(df)
     for date in col.date:
         df[date] = pd.to_datetime(df[date])
-
+        print(df)
     for quant in col.quantitative:
         if (df[quant].str.contains(",", regex=False)).any():
             df[quant] = df[quant].apply(lambda x: (x.replace(".", "").replace(",", ".")))
