@@ -1,15 +1,8 @@
 {% extends "base.html" %}
-{% comment %} {% load django_altair %} {% endcomment %}
+{% load enable_action %}
 
 {% load static %}
 {% block script %}
-
-<script src="{% static 'js/vega@3.2.js' %}"></script>
-<script src="{% static 'js/vega-lite@2.4.1.js' %}"></script>
-<script src="{% static 'js/vega-embed@3.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm//vega@3.2"></script>
-<script src="https://cdn.jsdelivr.net/npm//vega-lite@2.4.1"></script>
-<script src="https://cdn.jsdelivr.net/npm//vega-embed@3.0"></script>
 
 {% endblock %}
 
@@ -55,7 +48,10 @@
                         </div>
                         <div class = "generateBtn">
                             {% csrf_token %}
-                            <button type="text" name="fileBtn" value="{{ filePath }}" class="chartButton"> Gerar Gráfico</button>
+                            {% button_disabled categoricalData quantitativeData as btn_disabled %}
+                            <button type="text" name="fileBtn" value="{{ filePath }}" class="chartButton" {% if btn_disabled %} disabled {% endif %}>
+                                Gerar Gráfico
+                            </button>
                         </div>
                     </form>
                  </div>

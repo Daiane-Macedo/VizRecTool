@@ -112,7 +112,6 @@ class Chart:
             return chartsList
 
 
-# Attribute 'type' defines if is a scatter or line chart
 def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
     # format chart layout
     trace = go.Scatter(marker=dict(symbol='circle'),
@@ -213,18 +212,6 @@ def build_scatter_plot(dataframe, category, xAxis, yAxis, chartName):
 
     chart = Chart()
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
-    return chart
-
-    # trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
-    #                     marker=dict(symbol='circle'),
-    #                     mode='markers',
-    #                     line=dict(color='rgb(255,0,0)'), showlegend=False)
-    # data = [trace1]
-    # layout = getLayout(xAxis, yAxis, chartName)
-    # figure = go.Figure(data=data, layout=layout)
-    # chart = Chart()
-    # chart.content = opy.plot(figure, auto_open=False, output_type='div')
-
     return chart
 
 
