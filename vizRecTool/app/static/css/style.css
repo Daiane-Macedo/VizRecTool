@@ -50,7 +50,7 @@ label{
 }
 button:disabled,
 button[disabled=disabled]{
-    border: 1px solid #999999;
+    border: 0 none;;
     background-color: #cccccc;
     color: #666666;
     opacity: 0.65;
@@ -66,7 +66,7 @@ button[disabled=disabled]{
     padding: 4px 8px 4px 8px !important;
     /*padding: 4px;*/
     overflow: hidden;
-    border-width: 0;
+    border: 0 none;
     outline: none;
     border-radius: 2px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
