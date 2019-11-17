@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+from typing import Pattern
 
 import chardet
 import pandas as pd
@@ -13,6 +14,14 @@ class Type(object):
     categorical = 1
     numerical = 2
     cDate = 3
+
+
+class ChartType:
+    Bar = 0
+    Column = 1
+    Line = 2
+    Scatter = 3
+    Pie = 4
 
 
 class Columns:
@@ -111,9 +120,9 @@ def lookup(s, dFormat):
     This is an extremely fast approach to datetime parsing.
     For large data, the same dates are often repeated. Rather than
     re-parse these, we store all unique dates, parse them, and
-    use a lookup to convert all dates.
+    use a lookup to convert all dates.,
     """
-    dates = {date: pd.to_datetime(date, dayfirst=dFormat) for date in s.unique()}
+    dates = {date: pd.to_datetime(date, dayfirst=dFormat, errors='coerce') for date in s.unique()}
     return s.map(dates)
 
 
@@ -135,7 +144,7 @@ def detect_encode(csvFile):
 
 def columnType(data):
     data = str(data).strip()
-    regNumber = re.compile(r"(\d),(\d)")  # looks for numbers with commas
+    regNumber: Pattern[str] = re.compile(r"(\d),(\d)")  # looks for numbers with commas
     if regNumber.search(data) or isNumber(data):
         return Type.numerical
     if isDate(data):

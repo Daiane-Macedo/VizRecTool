@@ -8,14 +8,13 @@ import plotly.offline as opy
 
 sys.path.append("..")
 import utils
+from utils import ChartType
 
 
 class FileData:
-
     FILE_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), "files/")
 
     def loadData(csvFile):
-
         fileName = csvFile.name
         filePath = FileData.FILE_FOLDER + csvFile.name
 
@@ -101,13 +100,20 @@ class Chart:
 
         if xAxis in col.quantitative and yAxis in col.quantitative:  # scatter plot
             chartsList = []
-            chart = build_scatter_plot(df, xAxis, yAxis, fileName)
-            chartsList.append(chart)
+            if not col.categorical:
+                chart = build_scatter_plot(df, None, xAxis, yAxis, fileName)
+                chartsList.append(chart)
+                # truncate list in 5 charts (max)
+                chartsList = chartsList[0: 5]
+            else:
+                for category in col.categorical:
+                    chart = build_scatter_plot(df, category, xAxis, yAxis, fileName)
+                    chartsList.append(chart)
             return chartsList
 
 
+# Attribute 'type' defines if is a scatter or line chart
 def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
-
     # format chart layout
     trace = go.Scatter(marker=dict(symbol='circle'),
                        mode='lines+markers',
@@ -116,12 +122,11 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=trace, layout=layout)
 
-
     # group by and sum numeric values
     if category:
         dataframe = dataframe[[category, yAxis, xAxis]]
         df = utils.data_binning(dataframe, xAxis, yAxis, category)
-        #df = dataframe.groupby([xAxis, category], as_index=False)[yAxis].sum()
+        # df = dataframe.groupby([xAxis, category], as_index=False)[yAxis].sum()
 
         # add traces to chart
         unique = df[category].unique()
@@ -181,16 +186,44 @@ def build_pie_chart(df, labels, values, fileName):
     return chart
 
 
-def build_scatter_plot(df, xAxis, yAxis, chartName):
-    trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
-                        marker=dict(symbol='circle'),
-                        mode='markers',
-                        line=dict(color='rgb(255,0,0)'), showlegend=False)
-    data = [trace1]
+def build_scatter_plot(dataframe, category, xAxis, yAxis, chartName):
+    trace = go.Scatter(marker=dict(symbol='circle'), mode='markers', showlegend=False)
     layout = getLayout(xAxis, yAxis, chartName)
-    figure = go.Figure(data=data, layout=layout)
+    figure = go.Figure(data=trace, layout=layout)
+
+    if category:
+        figure.update_layout(title=chartName + ' ( ' + (category.lower()) + ')')
+        df = dataframe[[category, yAxis, xAxis]]
+        figure.update_layout(showlegend=True)
+
+        # add categories to chart
+        unique = df[category].unique()
+        for name in unique:
+            df2 = dict(tuple(df.groupby(category)))
+            df2 = df2[name]
+            trace.name = name
+            trace.y = df2[yAxis]
+            trace.x = df2[xAxis]
+            figure.add_trace(trace)
+    # No categories: build simple scatter plot
+    else:
+        trace.y = dataframe[yAxis]
+        trace.x = dataframe[xAxis]
+        figure.add_trace(trace)
+
     chart = Chart()
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    return chart
+
+    # trace1 = go.Scatter(x=df[xAxis], y=df[yAxis],
+    #                     marker=dict(symbol='circle'),
+    #                     mode='markers',
+    #                     line=dict(color='rgb(255,0,0)'), showlegend=False)
+    # data = [trace1]
+    # layout = getLayout(xAxis, yAxis, chartName)
+    # figure = go.Figure(data=data, layout=layout)
+    # chart = Chart()
+    # chart.content = opy.plot(figure, auto_open=False, output_type='div')
 
     return chart
 
