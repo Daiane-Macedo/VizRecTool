@@ -8,6 +8,7 @@ import plotly.offline as opy
 
 sys.path.append("..")
 import utils
+import plotly.io as pio
 from utils import ChartType
 
 
@@ -22,7 +23,7 @@ class FileData:
             raise Exception('Tipo de arquivo inválido. Insira um ".csv"')
 
         # cleaning old files and uploading received file
-        shutil.rmtree(FileData.FILE_FOLDER)
+        utils.reset_folder(FileData.FILE_FOLDER)
         utils.upload(FileData.FILE_FOLDER, csvFile)
 
         encode = utils.detect_encode(filePath)
@@ -50,8 +51,12 @@ class Chart:
         self.figure = None
         self.content = None
 
+    IMAGES_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static/img/")
+
     def build_chart(csvFile, xAxis, yAxis):
-        # chartsList = []
+        # cleaning old files
+        utils.reset_folder(Chart.IMAGES_FOLDER)
+
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
@@ -136,6 +141,7 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
             trace.y = df2[yAxis]
             trace.x = df2[xAxis]
             figure.add_trace(trace)
+
     else:
         dataframe = dataframe[[yAxis, xAxis]]
         df = utils.data_binning(dataframe, xAxis, yAxis, None)
@@ -144,7 +150,10 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
         trace.x = df[xAxis]
         figure.add_trace(trace)
 
+    image = Chart.IMAGES_FOLDER + utils.generate_random_imag_name()
+    pio.write_image(figure, image)
     chart = Chart()
+    chart.image = image
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
     return chart
 
@@ -166,7 +175,10 @@ def build_bar_chart(dataframe, xAxis, yAxis, chartName):
         trace.x = df2[xAxis]
         figure.add_trace(trace)
 
+    image = Chart.IMAGES_FOLDER + utils.generate_random_imag_name()
+    pio.write_image(figure, image)
     chart = Chart()
+    chart.image = image
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
     return chart
 
@@ -179,9 +191,12 @@ def build_pie_chart(df, labels, values, fileName):
     )]
     figure = go.Figure(data)
     figure.update_layout(title_text=fileName)
-    chart = Chart()
-    chart.content = opy.plot(figure, auto_open=False, output_type='div')
+    image = Chart.IMAGES_FOLDER + utils.generate_random_imag_name()
+    pio.write_image(figure, image)
 
+    chart = Chart()
+    chart.image = image
+    chart.content = opy.plot(figure, auto_open=False, output_type='div')
     return chart
 
 
@@ -204,13 +219,17 @@ def build_scatter_plot(dataframe, category, xAxis, yAxis, chartName):
             trace.y = df2[yAxis]
             trace.x = df2[xAxis]
             figure.add_trace(trace)
+
     # No categories: build simple scatter plot
     else:
         trace.y = dataframe[yAxis]
         trace.x = dataframe[xAxis]
         figure.add_trace(trace)
 
+    image = Chart.IMAGES_FOLDER + utils.generate_random_imag_name()
+    pio.write_image(figure, image)
     chart = Chart()
+    chart.image = image
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
     return chart
 

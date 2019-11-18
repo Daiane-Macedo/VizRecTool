@@ -1,3 +1,6 @@
+import os
+import shutil
+import uuid
 from datetime import datetime
 import re
 from typing import Pattern
@@ -202,3 +205,16 @@ def upload(path, file):
     filename = fs.save(file.name, file)
     file_url = fs.url(filename)
     return file_url
+
+
+def generate_random_imag_name():
+    imgName = str(uuid.uuid4()) + ".png"
+    return imgName
+
+
+def reset_folder(path):
+    # cleaning old files
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    if not os.path.exists(path):
+        os.mkdir(path)
