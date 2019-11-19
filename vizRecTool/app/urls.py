@@ -1,6 +1,6 @@
 from django.urls import path
 
-from app.views import IndexView
+from views import IndexView
 
 app_name = "app"
 
