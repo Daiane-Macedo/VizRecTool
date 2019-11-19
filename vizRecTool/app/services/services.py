@@ -4,7 +4,8 @@ import sys
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as opy
-from app import utils
+import utils as utils
+from utils import *
 sys.path.append("..")
 
 
