@@ -1,14 +1,12 @@
 import os
 import shutil
 import sys
-
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as opy
+import app.utils as utils
 
 sys.path.append("..")
-import utils
-from utils import ChartType
 
 
 class FileData:

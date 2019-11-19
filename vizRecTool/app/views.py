@@ -3,9 +3,8 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-import forms
-from services.services import Chart
-from services.services import FileData
+from .services.services import Chart, FileData
+from .forms import fileForm
 import logging
 
 
@@ -31,7 +30,7 @@ class IndexView(TemplateView):
             return render(request, IndexView.template_name, context)
 
     def chart(request):
-        form = forms.fileForm(request.POST or None)
+        form = fileForm(request.POST or None)
         quantitative = request.POST.getlist('quantitativeData')[0]
         categorical = request.POST.getlist('categoricalData')[0]
         resultChart = None
