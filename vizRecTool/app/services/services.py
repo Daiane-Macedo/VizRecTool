@@ -184,14 +184,13 @@ def build_pie_chart(df, labels, values, fileName):
 
 
 def build_scatter_plot(dataframe, category, xAxis, yAxis, chartName):
-    trace = go.Scatter(marker=dict(symbol='circle'), mode='markers', showlegend=False)
+    trace = go.Scatter(marker=dict(symbol='circle'), mode='markers', showlegend=True)
     layout = getLayout(xAxis, yAxis, chartName)
     figure = go.Figure(data=trace, layout=layout)
 
     if category:
         figure.update_layout(title=chartName + ' ( ' + (category.lower()) + ')')
         df = dataframe[[category, yAxis, xAxis]]
-        figure.update_layout(showlegend=True)
 
         # add categories to chart
         unique = df[category].unique()
@@ -207,6 +206,7 @@ def build_scatter_plot(dataframe, category, xAxis, yAxis, chartName):
         trace.y = dataframe[yAxis]
         trace.x = dataframe[xAxis]
         figure.add_trace(trace)
+        figure.update_layout(showlegend=False)
 
     chart = Chart()
     chart.content = opy.plot(figure, auto_open=False, output_type='div')
