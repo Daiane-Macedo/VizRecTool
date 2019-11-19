@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as opy
-from utils import *
+import utilities as utils
 
 sys.path.append("..")
 
@@ -21,14 +21,14 @@ class FileData:
 
         # cleaning old files and uploading received file
         shutil.rmtree(FileData.FILE_FOLDER)
-        upload(FileData.FILE_FOLDER, csvFile)
+        utils.upload(FileData.FILE_FOLDER, csvFile)
 
-        encode = detect_encode(filePath)
-        delimiter = detect_delimiter(filePath, encode)
+        encode = utils.detect_encode(filePath)
+        delimiter = utils.detect_delimiter(filePath, encode)
 
         df = pd.read_csv(filePath, index_col=False, encoding=encode['encoding'],
                          sep=delimiter)
-        df = clean_dataFrame(df)
+        df = utils.clean_dataFrame(df)
         df.columns = map(str.upper, df.columns)
         header = df.columns.values
         line = df.iloc[1].values
@@ -53,17 +53,17 @@ class Chart:
         fileName = csvFile
         filePath = FileData.FILE_FOLDER + fileName
         fileName = fileName[:-4]
-        encode = detect_encode(filePath)
-        delimiter = detect_delimiter(filePath, encode)
+        encode = utils.detect_encode(filePath)
+        delimiter = utils.detect_delimiter(filePath, encode)
 
         df = pd.read_csv(filePath, index_col=False, encoding=encode['encoding'], nrows=4999, sep=delimiter)
-        df = clean_dataFrame(df)
+        df = utils.clean_dataFrame(df)
 
         df.columns = map(str.upper, df.columns)
         header = df.columns.values
         line = df.iloc[1].values
         col = categorize_columns(line, header)
-        df = parse_columns(df, col)
+        df = utils.parse_columns(df, col)
 
         uniqueVal = df[xAxis].unique()
         if xAxis in col.categorical and yAxis in col.quantitative and len(uniqueVal) < 3:  # pie
@@ -122,7 +122,7 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
     # group by and sum numeric values
     if category:
         dataframe = dataframe[[category, yAxis, xAxis]]
-        df = data_binning(dataframe, xAxis, yAxis, category)
+        df = utils.data_binning(dataframe, xAxis, yAxis, category)
         # df = dataframe.groupby([xAxis, category], as_index=False)[yAxis].sum()
 
         # add traces to chart
@@ -136,7 +136,7 @@ def build_line_chart(dataframe, category, xAxis, yAxis, chartName):
             figure.add_trace(trace)
     else:
         dataframe = dataframe[[yAxis, xAxis]]
-        df = data_binning(dataframe, xAxis, yAxis, None)
+        df = utils.data_binning(dataframe, xAxis, yAxis, None)
         trace.name = yAxis
         trace.y = df[yAxis]
         trace.x = df[xAxis]
@@ -214,12 +214,12 @@ def build_scatter_plot(dataframe, category, xAxis, yAxis, chartName):
 
 
 def categorize_columns(line, header):
-    columns = Columns()
+    columns = utils.Columns()
 
     for i in range(len(line)):
-        if columnType(line[i]) == Type.categorical:
+        if utils.columnType(line[i]) == utils.Type.categorical:
             columns.categorical.append(header[i].upper())
-        elif columnType(line[i]) == Type.cDate:
+        elif utils.columnType(line[i]) == utils.Type.cDate:
             columns.date.append(header[i].upper())
         else:
             columns.quantitative.append(header[i].upper())
