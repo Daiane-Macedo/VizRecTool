@@ -19,8 +19,36 @@ body{
 label{
     margin: 0;
 }
+
 .col-8{
    min-width: 100% !important;
+}
+.col-3{
+    min-width: 30% !important;
+
+}
+.col-7{
+    max-width: 53.333333% !important;
+}
+
+.logo{
+    padding-top: 3em;
+}
+.title{
+    text-align: center;
+    line-height: 0.5em;
+    font-size: 2em;
+    margin: 0 !important;
+    font-family: 'Mitr', sans-serif;
+    color: #3c47cc;
+    /*border-top: solid;*/
+    /*border-bottom: solid*/
+}
+.sub{
+    font-size: 0.6em;
+    padding-top: 5px;
+    text-align: center;
+    margin-block-start: 0 !important;
 }
 .container-chart,
 .container-menu{
@@ -30,9 +58,8 @@ label{
     width: 94%;
 }
 .container-menu{
-    margin-top: 2%;
+    margin-top: 1%;
     box-shadow: -2px 1px 5px rgba(0, 0, 0, 0.1);
-
 }
 .container-chart{
     text-align: center;
@@ -103,7 +130,7 @@ button[disabled=disabled]{
 
 .menuBox p{
     display: block;
-    margin-block-start: 1.3em !important;
+    margin-block-start: 1.6em;
 }
 row{
     min-height: 130px;
@@ -120,11 +147,11 @@ row{
     width: 68%;
 }
 #line1{
-    padding-bottom: 0.4em;
+    padding-bottom: 0.6em;
     border-bottom:1px solid rgba(0, 0, 0, 0.12);
  }
 #line2{
-    padding-top: 0.4em;
+    padding-top: 0.6em;
 }
 
 .bootstrap-select .btn:focus{outline:none!important;}
